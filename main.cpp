@@ -36,29 +36,23 @@ int main(int, char**) {
     std::cout << "Введите время: ";
     std::cin >> hours >> minutes;
 
-    if ((hours > kMaxHours || hours < kMinHours) || (minutes > kMaxMinutes || minutes < kMinMinutes)) {
-        std::cout << "Введены  некорректные данные, пожалуйста, введите реалистичное число часов и минут!\n";
-        return 1;
-    }
-
-    if (hours == kMinHours && minutes == kMinMinutes) {
-        std::cout << "Полночь\n";
-        return 0;
-    } else if (hours == kHighNoon && minutes == kMinMinutes) {
-        std::cout << "Полдень\n";
+    if ((hours >= kMaxHours or hours < kMin) or (minutes >= kMaxMinutes or minutes < kMin)) {
+        std::cout << "Введены некорректные данные, перезапустите программу\n";
         return 0;
     }
 
-    DayTime Daytime{};
-
-    if (hours >= kNightBegin && hours < kMorningBegin) {
-        Daytime = DayTime::Night;
-    } else if (hours >= kMorningBegin && hours < kDayBegin) {
-        Daytime = DayTime::Morning;
-    } else if (hours >= kDayBegin && hours < kEveningBegin) {
-        Daytime = DayTime::Day;
-    } else if (hours >= kEveningBegin) {
-        Daytime = DayTime::Evening;
+    if (hours == kMin and minutes == kMin) {
+        Daytime = Midnight;
+    } else if (hours == kHighnoon and minutes == kMin) {
+        Daytime = High_noon;
+    } else if (hours >= kNightbeg and hours < kMorningbeg) {
+        Daytime = Night;
+    } else if (hours >= kMorningbeg and hours < kDaybeg) {
+        Daytime = Morning;
+    } else if (hours >= kDaybeg and hours < kEveningbeg) {
+        Daytime = Day;
+    } else if (hours >= kEveningbeg) {
+        Daytime = Evening;
     }
 
     hours %= kHighNoon;
@@ -71,35 +65,60 @@ int main(int, char**) {
         std::cout << hours << " часов ";
     }
 
-    if (minutes == kMinMinutes) {
-    } else if (minutes >= kMinutesSpecialGenitiveZoneBeg && minutes <= kMinutesSpecialGenitiveZoneEnd) {
-        std::cout << minutes << " минут ";
-    } else if (minutes % kDecimalBase == kHoursAndMinsNominative) {
-        std::cout << minutes << " минута ";
-    } else if ((minutes % kDecimalBase >= kHoursAndMinsAccusativeMin) && (minutes % kDecimalBase <= kHoursAndMinsAccusativeMax)) {
-        std::cout << minutes << " минуты ";
+    if (minutes == kMin) {
+        std::strcpy(minName, "ровно ");
+    } else if (minutes >= kminspeczonebeg and minutes <= kminspeczoneend) {
+        std::strcpy(minName, "минут ");
+    } else if (minutes % klastnumberdef == kHoursAndMinsSpecPoint) {
+        std::strcpy(minName, "минута ");
+    } else if ((minutes % klastnumberdef >= kHoursAndMinsNameChangeMin) and (minutes % klastnumberdef <= kHoursAndMinsNameChangeMax)) {
+        std::strcpy(minName, "минуты ");
     } else {
-        std::cout << minutes << " минут ";
+        std::strcpy(minName, "минут ");
     }
 
-    switch (Daytime) {
-        case DayTime::Morning:
-            std::cout << "утра ";
-            break;
-        case DayTime::Day:
-            std::cout << "дня ";
-            break;
-        case DayTime::Evening:
-            std::cout << "вечера ";
-            break;
-        case DayTime::Night:
-            std::cout << "ночи ";
-            break;
-    }
-    if (minutes == kMinMinutes) {
-        std::cout << "ровно\n";
+    if (minutes != kMin) {
+        switch (Daytime) {
+            case Midnight:
+                std::cout << "Полночь\n";
+                break;
+            case High_noon:
+                std::cout << "Полдень\n";
+                break;
+            case Morning:
+                std::cout << hours << " " << hourName << minutes << " " << minName << "утра\n";
+                break;
+            case Day:
+                std::cout << hours << " " << hourName << minutes << " " << minName << "дня\n";
+                break;
+            case Evening:
+                std::cout << hours << " " << hourName << minutes << " " << minName << "вечера\n";
+                break;
+            case Night:
+                std::cout << hours << " " << hourName << minutes << " " << minName << "ночи\n";
+                break;
+        }
     } else {
-        std::cout << "\n";
+        switch (Daytime) {
+            case Midnight:
+                std::cout << "Полночь\n";
+                break;
+            case High_noon:
+                std::cout << "Полдень\n";
+                break;
+            case Morning:
+                std::cout << hours << " " << hourName << "утра" << minName;
+                break;
+            case Day:
+                std::cout << hours << " " << hourName << "дня" << minName;
+                break;
+            case Evening:
+                std::cout << hours << " " << hourName << "вечера" << minName;
+                break;
+            case Night:
+                std::cout << hours << " " << hourName << "ночи" << minName;
+                break;
+        }
     }
     return 0;
 }
