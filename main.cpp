@@ -37,7 +37,7 @@ int main(int, char**) {
     std::cin >> hours >> minutes;
 
     if ((hours > kMaxHours || hours < kMinHours) || (minutes > kMaxMinutes || minutes < kMinMinutes)) {
-        std::cout << "Введены некорректные данные, пожалуйста, введите реалистичное число часов и минут!\n";
+        std::cout << "Введены  некорректные данные, пожалуйста, введите реалистичное число часов и минут!\n";
         return 1;
     }
 
@@ -71,17 +71,15 @@ int main(int, char**) {
         std::cout << hours << " часов ";
     }
 
-    if (minutes == kMinMinutes){
-
-    }
-    else if (minutes >= kMinutesSpecialGenitiveZoneBeg && minutes <= kMinutesSpecialGenitiveZoneEnd) {
-        std::cout <<  minutes << " минут ";
+    if (minutes == kMinMinutes) {
+    } else if (minutes >= kMinutesSpecialGenitiveZoneBeg && minutes <= kMinutesSpecialGenitiveZoneEnd) {
+        std::cout << minutes << " минут ";
     } else if (minutes % kDecimalBase == kHoursAndMinsNominative) {
-        std::cout <<  minutes << " минута ";
+        std::cout << minutes << " минута ";
     } else if ((minutes % kDecimalBase >= kHoursAndMinsAccusativeMin) && (minutes % kDecimalBase <= kHoursAndMinsAccusativeMax)) {
-        std::cout <<  minutes << " минуты ";
+        std::cout << minutes << " минуты ";
     } else {
-        std::cout <<  minutes << " минут ";
+        std::cout << minutes << " минут ";
     }
 
     switch (Daytime) {
@@ -97,10 +95,10 @@ int main(int, char**) {
         case DayTime::Night:
             std::cout << "ночи ";
             break;
-        }
-    if (minutes == kMinMinutes){
+    }
+    if (minutes == kMinMinutes) {
         std::cout << "ровно\n";
-    } else{
+    } else {
         std::cout << "\n";
     }
     return 0;
