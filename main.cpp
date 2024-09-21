@@ -1,10 +1,10 @@
 #include <iostream>
 
 namespace {
-const int kMaxMinutes = 59;
-const int kMaxHours = 23;
 const int kMinMinutes = 0;
+const int kMaxMinutes = 59;
 const int kMinHours = 0;
+const int kMaxHours = 23;
 
 const int kMorningBegin = 5;
 const int kDayBegin = 12;
@@ -12,14 +12,16 @@ const int kEveningBegin = 18;
 const int kNightBegin = 0;
 const int kHighNoon = 12;
 
-const int kHoursAndMinsAccusativeMin = 2;
-const int kHoursAndMinsAccusativeMax = 4;
-const int kHoursAndMinsNominative = 1;
-const int kMinutesSpecialGenitiveZoneBeg = 11;
-const int kMinutesSpecialGenitiveZoneEnd = 14;
+const int kHoursPluralAccusativeMin = 2;
+const int kHoursPluralAccusativeMax = 4;
+const int kMinutesPluralAccusativeMin = 2;
+const int kMinutesPluralAccusativeMax = 4;
+const int kHoursSingularNominative = 1;
+const int kMinutesSingularNominative = 1;
+const int kMinutesPluralGenitiveMin = 11;
+const int kMinutesPluralGenitiveMax = 14;
 
 const int kDecimalBase = 10;
-
 }  // namespace
 
 enum class DayTime {
@@ -30,14 +32,14 @@ enum class DayTime {
 };
 
 int main(int, char**) {
-    int hours = (kMaxHours + 1);
-    int minutes = (kMaxMinutes + 1);
+    int hours = -1;
+    int minutes = -1;
 
-    std::cout << "Введите время: ";
+    std::cout << "Введите время в формате a b, где a - число от 0 до 23, b - число от 0 до 59: ";
     std::cin >> hours >> minutes;
 
-    if ((hours > kMaxHours || hours < kMinHours) || (minutes > kMaxMinutes || minutes < kMinMinutes)) {
-        std::cout << "Введены некорректные данные, пожалуйста, введите реалистичное число часов и минут!\n";
+    if (hours > kMaxHours || hours < kMinHours || minutes > kMaxMinutes || minutes < kMinMinutes) {
+        std::cout << "Введены некорректные данные, пожалуйста, введите время в формате a b, где a - число от 0 до 23, b - число от 0 до 59!\n";
         return 1;
     }
 
@@ -57,29 +59,34 @@ int main(int, char**) {
         Daytime = DayTime::Morning;
     } else if (hours >= kDayBegin && hours < kEveningBegin) {
         Daytime = DayTime::Day;
-    } else if (hours >= kEveningBegin) {
+    } else if (hours >= kEveningBegin && hours <= kMaxHours) {
         Daytime = DayTime::Evening;
     }
 
-    hours %= kHighNoon;
+    if (hours > kHighNoon) {
+        hours %= kHighNoon;
+    }
 
-    if (hours == kHoursAndMinsNominative) {
+    if (hours == kHoursSingularNominative) {
         std::cout << hours << " час ";
-    } else if (hours >= kHoursAndMinsAccusativeMin && hours <= kHoursAndMinsAccusativeMax) {
+    } else if (hours >= kHoursPluralAccusativeMin && hours <= kHoursPluralAccusativeMax) {
         std::cout << hours << " часа ";
     } else {
         std::cout << hours << " часов ";
     }
 
-    if (minutes == kMinMinutes) {
-    } else if (minutes >= kMinutesSpecialGenitiveZoneBeg && minutes <= kMinutesSpecialGenitiveZoneEnd) {
-        std::cout << minutes << " минут ";
-    } else if (minutes % kDecimalBase == kHoursAndMinsNominative) {
-        std::cout << minutes << " минута ";
-    } else if ((minutes % kDecimalBase >= kHoursAndMinsAccusativeMin) && (minutes % kDecimalBase <= kHoursAndMinsAccusativeMax)) {
-        std::cout << minutes << " минуты ";
-    } else {
-        std::cout << minutes << " минут ";
+    int minutesLastDigit = minutes % kDecimalBase;
+
+    if (minutes != kMinMinutes) {
+        if ((minutesLastDigit == kMinutesSingularNominative) &&
+            (minutes < kMinutesPluralGenitiveMin || minutes > kMinutesPluralGenitiveMax)) {
+            std::cout << minutes << " минута ";
+        } else if ((minutesLastDigit >= kMinutesPluralAccusativeMin) && (minutesLastDigit <= kMinutesPluralAccusativeMax) &&
+                   (minutes < kMinutesPluralGenitiveMin || minutes > kMinutesPluralGenitiveMax)) {
+            std::cout << minutes << " минуты ";
+        } else {
+            std::cout << minutes << " минут ";
+        }
     }
 
     switch (Daytime) {
@@ -97,9 +104,8 @@ int main(int, char**) {
             break;
     }
     if (minutes == kMinMinutes) {
-        std::cout << "ровно\n";
-    } else {
-        std::cout << "\n";
+        std::cout << "ровно";
     }
+    std::cout << '\n';
     return 0;
 }
