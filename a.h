@@ -33,7 +33,7 @@ void task2(int a) {
     std::cout << prod << std::endl;
 }
 
-void task3(int h) {
+void task3(double h) {
     std::cout << "| x |     y     |     S(x)     |  N  |\n";
     long double x{};
     long double y{};
@@ -41,21 +41,21 @@ void task3(int h) {
     int N{};
     long double SumOfSeries{};
     long double NextSumOfSeries{};
-    for(int i = 0; i <= 5; ++i){
-        x = i*0.2;
-        std::cout << '|' << std::setw(3) << x <<'|';
-        y = (1 - x *x / 2) * cos(x) - x / 2 * sin(x);
+    for (int i = 0; i <= 5; ++i) {
+        x = i * h;
+        std::cout << '|' << std::setw(3) << x << '|';
+        y = (1 - x * x / 2) * cos(x) - x / 2 * sin(x);
         std::cout << std::setw(11) << y << '|';
         N = 1;
         SumOfSeries = 1.0;
-        NextSumOfSeries = -1 * (3 * x*x / 2);
+        NextSumOfSeries = -1 * (3 * x * x / 2);
         while (std::fabs(NextSumOfSeries) >= eps) {
             SumOfSeries += NextSumOfSeries;
-            NextSumOfSeries *= (- x * x * (2 * N * N + 1)) / ((2 * N + 1) * (2 * N + 2));
+            NextSumOfSeries *= (-x * x * (2 * N * N + 1)) / ((2 * N + 1) * (2 * N + 2));
             N += 1;
         }
         std::cout << std::setw(14) << SumOfSeries << '|';
-        std::cout << std::setw(5) << N-1 << '|'  << '\n';
+        std::cout << std::setw(5) << N - 1 << '|' << '\n';
     }
 }
 

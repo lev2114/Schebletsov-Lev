@@ -6,9 +6,14 @@
 #endif
 #include "a.h"
 
+namespace {
+const double h = 0.2;
+const int NumberToLeave = 5;
+}  // namespace
+
 int main(int, char**) {
     int TaskNumber{};
-    while (TaskNumber != 5) {
+    while (TaskNumber != NumberToLeave) {
         std::cout << "Введите, пожалуйста, номер задания от 1 до 4! Если хотите закончить выполнение, введите 5!\n";
         std::cin >> TaskNumber;
         if (TaskNumber == 1) {
@@ -27,7 +32,6 @@ int main(int, char**) {
             std::cin >> a;
             task2(a);
         } else if (TaskNumber == 3) {
-            double h = 0.2;
             task3(h);
         } else if (TaskNumber == 4) {
             char Exit = 'y';
