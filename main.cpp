@@ -1,9 +1,6 @@
-#ifndef A_H
-#define A_H
 #include <cmath>
 #include <iomanip>
 #include <iostream>
-#endif
 #include "a.h"
 
 namespace {
@@ -12,7 +9,7 @@ const int NumberToLeave = 5;
 }  // namespace
 
 int main(int, char**) {
-    int TaskNumber{};
+    int TaskNumber =-1;
     while (TaskNumber != NumberToLeave) {
         std::cout << "Введите, пожалуйста, номер задания от 1 до 4! Если хотите закончить выполнение, введите 5!\n";
         std::cin >> TaskNumber;
@@ -27,8 +24,8 @@ int main(int, char**) {
                 std::cout << "Введены неверные данные! ";
             }
         } else if (TaskNumber == 2) {
-            std::cout << "Отлично! Введите целое число a!\n";
-            int a{};
+            std::cout << "Отлично! Введите число a!\n";
+            double a{};
             std::cin >> a;
             task2(a);
         } else if (TaskNumber == 3) {
@@ -45,10 +42,15 @@ int main(int, char**) {
                     std::cout << "Вы хотите ввести ещё одно n? (y/n)\n";
                     std::cin >> Exit;
                 } else {
+                    std::cout << "Введено ненатуральное n!";
                 }
             }
+        } else if (TaskNumber == NumberToLeave) {
+            continue;
         } else {
-            std::cout << "Введены неверные данные! ";
+            std::cout << "Введены неверные данные!\n";
+            return 1;
         }
     }
+    return 0;
 }

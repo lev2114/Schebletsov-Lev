@@ -15,7 +15,7 @@ void task1(int n, int m) {
 }
 
 void task2(double a) {
-    int prod = 1;
+    double prod = 1;
     if (a >= 0) {
         int Leave = 8;
         for (int i = 2; i <= Leave; i += 2) {
