@@ -1,100 +1,127 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+
 #include "a.h"
 
-void task1(int n, int m) {
-    int DivisionCriterion = 5;
-    int sum = 0;
-    for (int i = 5; i <= n; i += 5) {
-        if (i % m != 0 && i % DivisionCriterion == 0) {
-            sum += i;
-        }
-    }
-    std::cout << sum << std::endl;
-}
+namespace {
+const int kTask1FirstDividend = 5;
+const int kTask1Step = 5;
 
-void task2(double a) {
-    double prod = 1;
-    if (a >= 0) {
-        int Leave = 8;
-        for (int i = 2; i <= Leave; i += 2) {
-            prod *= i * i;
+const int kTask2NumberToLeaveCycleNonNegativeA = 8;
+const int Task2NumberToLeaveCycleNegativeA = 9;
+
+const long double eps = 1e-8;
+const int kTask3NumberToLeaveCycle = 1;
+
+const int kTask3YLength = 11;
+const int kTask3SXLength = 14;
+const int kTask3XLength = 3;
+const int kTask3NLength = 3;
+
+const int kTask3XPrecicion = 1;
+const int kTask3YPrecicion = 6;
+const int kTask3SXPrecicion = 6;
+const int kTask3NPrecicion = 1;
+
+const int kTask4FirstLimitForIntermediateCalc = 3;
+const int kTask4SecondLimitForIntermediateCalc = 5;
+const int kTask4ThirdLimitForIntermediateCalc = 10;
+}  // namespace
+
+void Task1(int n, int m) {
+    if (m < n && n > 0 && m > 0) {
+        int sum = 0;
+
+        for (int i = kTask1FirstDividend; i <= n; i += kTask1Step) {
+            if (i % m != 0) {
+                sum += i;
+            }
         }
-        prod -= a;
+
+        std::cout << sum << std::endl;
+
     } else {
-        int Leave = 9;
-        for (int i = 3; i <= Leave; i += 3) {
-            prod *= (i - 2);
-        }
+        std::cout << "Введены некорректные данные!\n";
+        return;
     }
-    std::cout << prod << std::endl;
 }
 
-void task3(double h) {
-    std::cout << "| x |     y     |     S(x)     |  N  |\n";
-    long double x{};
-    long double y{};
-    long double eps = 1e-8;
-    int N{};
-    long double SumOfSeries{};
-    long double NextSumOfSeries{};
-    for (int i = 0; i <= 5; ++i) {
-        x = i * h;
-        std::cout << '|' << std::setw(3) << x << '|';
+void Task2(double a) {
+    double product = 1;
+    if (a >= 0) {
+        for (int i = 2; i <= kTask2NumberToLeaveCycleNonNegativeA; i += 2) {
+            product *= i * i;
+        }
+        product -= a;
+    } else {
+        for (int i = 3; i <= Task2NumberToLeaveCycleNegativeA; i += 3) {
+            product *= (i - 2);
+        }
+    }
+    std::cout << product << std::endl;
+}
+
+void Task3(double h) {
+    std::cout << std::setw(kTask3XLength) << "x" << std::setw(kTask3YLength) << "y" << std::setw(kTask3SXLength) << "S(x)" << std::setw(kTask3NLength)
+              << "N" << '\n';
+
+    for (double x = 0; x <= kTask3NumberToLeaveCycle; x += h) {
+        double y{};
         y = (1 - x * x / 2) * cos(x) - x / 2 * sin(x);
-        std::cout << std::setw(11) << y << '|';
-        N = 1;
-        SumOfSeries = 1.0;
-        NextSumOfSeries = -1 * (3 * x * x / 2);
-        while (std::fabs(NextSumOfSeries) >= eps) {
-            SumOfSeries += NextSumOfSeries;
-            NextSumOfSeries *= -1 * (x*x * (2 * (N + 1)*(N + 1) + 1))/((2*N*N + 1)*(2*N + 1)*(2*N + 2));
+
+        std::cout << std::setw(kTask3XLength) << std::fixed << std::setprecision(kTask3XPrecicion) << x;
+        std::cout << std::setw(kTask3YLength) << std::fixed << std::setprecision(kTask3YPrecicion) << y;
+
+        int N = 1;
+        double sumOfSeries = 1.0;
+        double nextMemberOfSeries = -1 * (3 * x * x / 2);
+
+        while (std::fabs(nextMemberOfSeries) >= eps) {
+            sumOfSeries += nextMemberOfSeries;
+            nextMemberOfSeries *= -1 * (x * x * (2 * (N + 1) * (N + 1) + 1)) / ((2 * N * N + 1) * (2 * N + 1) * (2 * N + 2));
             N += 1;
         }
-        std::cout << std::setw(14) << SumOfSeries << '|';
-        std::cout << std::setw(5) << N - 1 << '|' << '\n';
+
+        std::cout << std::setw(kTask3SXLength) << sumOfSeries;
+        std::cout << std::setw(kTask3NLength) << N - 1 << '\n';
     }
 }
 
-void task4(int n, int NumberOfDecimalPlaces) {
-    double LastValue{};
-    double CurrentValue{};
+void PrintIntermediateCalculations(int n, int steps, int numberOfDecimalPlaces) {
+    double IntermediateCalculationsLast = 0.0;
+    double IntermediateCalculationsCurrent = 0.0;
+
+    for (int i = steps; i > -1; --i) {
+        IntermediateCalculationsCurrent = sqrt(2 * (n - i) + IntermediateCalculationsLast);
+        IntermediateCalculationsLast = IntermediateCalculationsCurrent;
+    }
+
+    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << "Первые " << steps << ": " << IntermediateCalculationsCurrent << std::endl;
+}
+
+void Task4(int n, int numberOfDecimalPlaces) {
+    double LastValue = 0.0;
+    double CurrentValue = 0.0;
+
     for (int i = 1; i <= n; ++i) {
         CurrentValue = sqrt(2 * i + LastValue);
         LastValue = CurrentValue;
     }
-    std::cout << std::fixed << std::setprecision(NumberOfDecimalPlaces) << CurrentValue << std::endl;
+
+    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << CurrentValue << std::endl;
+
     std::cout << "Промежуточные вычисления:" << std::endl;
-    double IntermediateCalculationsLast{};
-    double IntermediateCalculationsCurrent{};
-    if (n >= 3) {
-        for (int i = 2; i > -1; --i) {
-            IntermediateCalculationsCurrent = sqrt(2 * (n - i) + IntermediateCalculationsLast);
-            IntermediateCalculationsLast = IntermediateCalculationsCurrent;
-        }
-        std::cout << std::fixed << std::setprecision(NumberOfDecimalPlaces) << "Первые 3: " << IntermediateCalculationsCurrent << std::endl;
-    } else {
-        std::cout << "n<3\n";
+
+    if (n >= kTask4FirstLimitForIntermediateCalc) {
+        PrintIntermediateCalculations(n, (kTask4FirstLimitForIntermediateCalc - 1), numberOfDecimalPlaces);
     }
-    if (n >= 5) {
-        IntermediateCalculationsLast = 0.0;
-        for (int i = 4; i > -1; --i) {
-            IntermediateCalculationsCurrent = sqrt(2 * (n - i) + IntermediateCalculationsLast);
-            IntermediateCalculationsLast = IntermediateCalculationsCurrent;
-        }
-        std::cout << std::fixed << std::setprecision(NumberOfDecimalPlaces) << "Первые 5: " << IntermediateCalculationsCurrent << std::endl;
-    } else {
-        std::cout << "n<5\n";
+
+    if (n >= kTask4SecondLimitForIntermediateCalc) {
+        PrintIntermediateCalculations(n, (kTask4SecondLimitForIntermediateCalc - 1), numberOfDecimalPlaces);
     }
-    if (n >= 10) {
-        IntermediateCalculationsLast = 0.0;
-        for (int i = 9; i > -1; --i) {
-            IntermediateCalculationsCurrent = sqrt(2 * (n - i) + IntermediateCalculationsLast);
-            IntermediateCalculationsLast = IntermediateCalculationsCurrent;
-        }
-        std::cout << std::fixed << std::setprecision(NumberOfDecimalPlaces) << "Первые 10: " << IntermediateCalculationsCurrent << std::endl;
-    } else {
-        std::cout << "n<10\n";
+
+    if (n >= kTask4ThirdLimitForIntermediateCalc) {
+        PrintIntermediateCalculations(n, (kTask4ThirdLimitForIntermediateCalc - 1), numberOfDecimalPlaces);
     }
 }
