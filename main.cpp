@@ -78,8 +78,7 @@ int main(int, char**) {
     int minutesLastDigit = minutes % kDecimalBase;
 
     if (minutes != kMinMinutes) {
-        if ((minutesLastDigit == kMinutesSingularNominative) &&
-            (minutes < kMinutesPluralGenitiveMin || minutes > kMinutesPluralGenitiveMax)) {
+        if ((minutesLastDigit == kMinutesSingularNominative) && (minutes < kMinutesPluralGenitiveMin || minutes > kMinutesPluralGenitiveMax)) {
             std::cout << minutes << " минута ";
         } else if ((minutesLastDigit >= kMinutesPluralAccusativeMin) && (minutesLastDigit <= kMinutesPluralAccusativeMax) &&
                    (minutes < kMinutesPluralGenitiveMin || minutes > kMinutesPluralGenitiveMax)) {
