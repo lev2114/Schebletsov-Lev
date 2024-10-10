@@ -9,9 +9,9 @@ const int kTask1FirstDividend = 5;
 const int kTask1Step = 5;
 
 const int kTask2NumberToLeaveCycleNonNegativeA = 8;
-const int Task2NumberToLeaveCycleNegativeA = 9;
+const int kTask2NumberToLeaveCycleNegativeA = 9;
 
-const long double eps = 1e-8;
+const double eps = 1e-8;
 const int kTask3NumberToLeaveCycle = 1;
 
 const int kTask3YLength = 11;
@@ -55,11 +55,11 @@ void Task2(double a) {
         }
         product -= a;
     } else {
-        for (int i = 3; i <= Task2NumberToLeaveCycleNegativeA; i += 3) {
+        for (int i = 3; i <= kTask2NumberToLeaveCycleNegativeA; i += 3) {
             product *= (i - 2);
         }
     }
-    std::cout << product << std::endl;
+    std::cout << std::fixed << std::setprecision(3) << product << std::endl;
 }
 
 void Task3(double h) {
@@ -89,27 +89,26 @@ void Task3(double h) {
 }
 
 void PrintIntermediateCalculations(int n, int steps, int numberOfDecimalPlaces) {
-    double IntermediateCalculationsLast = 0.0;
-    double IntermediateCalculationsCurrent = 0.0;
+    double intermediateCalculationsLast = 0.0;
+    double intermediateCalculationsCurrent = 0.0;
 
     for (int i = steps; i > -1; --i) {
-        IntermediateCalculationsCurrent = sqrt(2 * (n - i) + IntermediateCalculationsLast);
-        IntermediateCalculationsLast = IntermediateCalculationsCurrent;
+        intermediateCalculationsCurrent = sqrt(2 * (n - i) + intermediateCalculationsLast);
+        intermediateCalculationsLast = intermediateCalculationsCurrent;
     }
 
-    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << "Первые " << steps << ": " << IntermediateCalculationsCurrent << std::endl;
+    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << "Первые " << steps + 1 << ": " << intermediateCalculationsCurrent << std::endl;
 }
 
 void Task4(int n, int numberOfDecimalPlaces) {
-    double LastValue = 0.0;
-    double CurrentValue = 0.0;
+    double y = 0.0;
 
     for (int i = 1; i <= n; ++i) {
-        CurrentValue = sqrt(2 * i + LastValue);
-        LastValue = CurrentValue;
+        y = sqrt(2 * i + y);
+      
     }
 
-    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << CurrentValue << std::endl;
+    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << y << std::endl;
 
     std::cout << "Промежуточные вычисления:" << std::endl;
 
