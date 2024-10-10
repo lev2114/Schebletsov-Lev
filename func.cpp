@@ -66,7 +66,7 @@ void Task3(double h) {
     std::cout << std::setw(kTask3XLength) << "x" << std::setw(kTask3YLength) << "y" << std::setw(kTask3SXLength) << "S(x)" << std::setw(kTask3NLength)
               << "N" << '\n';
 
-    for (double x = 0; x <= kTask3NumberToLeaveCycle; x += h) {
+    for (double x = 0; x <= kTask3NumberToLeaveCycle; x += h) { // NOLINT
         double y{};
         y = (1 - x * x / 2) * cos(x) - x / 2 * sin(x);
 
@@ -97,7 +97,8 @@ void PrintIntermediateCalculations(int n, int steps, int numberOfDecimalPlaces) 
         intermediateCalculationsLast = intermediateCalculationsCurrent;
     }
 
-    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << "Первые " << steps + 1 << ": " << intermediateCalculationsCurrent << std::endl;
+    std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << "Первые " << steps + 1 << ": " << intermediateCalculationsCurrent
+              << std::endl;
 }
 
 void Task4(int n, int numberOfDecimalPlaces) {
@@ -105,7 +106,6 @@ void Task4(int n, int numberOfDecimalPlaces) {
 
     for (int i = 1; i <= n; ++i) {
         y = sqrt(2 * i + y);
-      
     }
 
     std::cout << std::fixed << std::setprecision(numberOfDecimalPlaces) << y << std::endl;
