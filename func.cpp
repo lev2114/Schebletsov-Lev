@@ -66,7 +66,7 @@ void Task3(double h) {
     std::cout << std::setw(kTask3XLength) << "x" << std::setw(kTask3YLength) << "y" << std::setw(kTask3SXLength) << "S(x)" << std::setw(kTask3NLength)
               << "N" << '\n';
 
-    for (double x = 0; x <= kTask3NumberToLeaveCycle; x += h) { // NOLINT
+    for (double x = 0; x <= kTask3NumberToLeaveCycle; x += h) {  // NOLINT
         double y{};
         y = (1 - x * x / 2) * cos(x) - x / 2 * sin(x);
 
