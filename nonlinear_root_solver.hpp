@@ -3,13 +3,24 @@
 
 namespace NonLinearRootSolver{
 
-double PrecicionInput();
+struct Solution{
+    bool haveWeFoundAnswer;
+    double solution;
+    int N;
+};
+
+
+double EpsInput();
 int CoefficientBeforeCosineInput();
 int runApplication();
 int showMenu();
-void halfDivisionMethod();
-void newthonMethod();
-double iterationMethod(int coefficientBeforeCosine, double precicion);
+void halfDivisionMethodapp();
+[[nodiscard]] Solution halfDivisionMethodcount();
+void newthonMethodapp();
+[[nodiscard]] Solution newthonMethodcount();
+void iterationMethodapp();
+[[nodiscard]] Solution iterationMethodcount(int coefficientBeforeCosine, double eps);
+
 
 
 enum class MenuOption : int{
@@ -17,6 +28,7 @@ enum class MenuOption : int{
     NewthonMethod,
     HalfDivisionMethod,
 };
+
 
 }
 
