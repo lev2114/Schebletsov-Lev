@@ -1,12 +1,6 @@
-#include <iostream>
-#include <cmath>
-#include <iomanip>
+#include "NonlinearEquationSolver.hpp"
 
-#include "nonlinear_root_solver.hpp"
-
-
-
-
-int main(int,char**){
-    return NonLinearRootSolver::runApplication();
+int main(int, char**) {
+    NonLinearEquationSolver::StartLoop();
+    return 0;
 }
