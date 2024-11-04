@@ -8,6 +8,8 @@ namespace {
 const double kXDefine = 0.;
 const int kMaxIterations = 10'000;
 
+int Answer{};
+
 const int kDerivativeX = 1;
 }  // namespace
 
@@ -52,7 +54,7 @@ void PrintAnswer(double x, int iterations, double precicion) {
 }  // namespace
 
 namespace NonLinearEquationSolver {
-Solution IterationMethodCount(int cosineCoefficient, double eps) {
+Answer IterationMethodCount(int cosineCoefficient, double eps) {
     int iterations{};
     double xPrev = kXDefine + 1;
     double xCurr = kXDefine;
@@ -74,7 +76,7 @@ void IterationMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     double precicion = ReadPrecicion();
 
-    Solution answer = IterationMethodCount(cosineCoefficient, precicion);
+    Answer answer = IterationMethodCount(cosineCoefficient, precicion);
 
     if (!answer.xValid) {
         std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
@@ -83,7 +85,7 @@ void IterationMethodApp() {
     }
 }
 
-Solution NewthonMethodCount(int cosineCoefficient, double eps) {
+Answer NewthonMethodCount(int cosineCoefficient, double eps) {
     int iterations{};
     double xPrev = kXDefine + 1;
     double xCurr = kXDefine;
@@ -104,7 +106,7 @@ void NewthonMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     double precicion = ReadPrecicion();
 
-    Solution answer = NewthonMethodCount(cosineCoefficient, precicion);
+    Answer answer = NewthonMethodCount(cosineCoefficient, precicion);
 
     if (!answer.xValid) {
         std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
@@ -114,7 +116,7 @@ void NewthonMethodApp() {
     }
 }
 
-Solution HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, double rhs) {
+Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, double rhs) {
     int iterations{};
     double x{};
     double fx{};
@@ -155,7 +157,7 @@ void HalfDivisionMethodApp() {
         std::cerr << "a не меньше b!";
         return;
     }
-    Solution answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
+    Answer answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
     if (answer.xValid) {
         PrintAnswer(answer.x, answer.iterations, precicion);
     } else {
