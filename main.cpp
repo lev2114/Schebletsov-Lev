@@ -1,9 +1,7 @@
-#include "MassiveSort.hpp"
 #include <iostream>
+#include "MassiveSort.hpp"
 
-
-
-int main(int argc, char** argv){
+int main(int, char**) {
     MassiveSort::StartCyle();
     return 0;
 }
