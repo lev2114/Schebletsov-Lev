@@ -94,9 +94,6 @@ Answer NewthonMethodCount(int cosineCoefficient, double eps) {
         xPrev = xCurr;
         xCurr -= (EquationSolve(xPrev, cosineCoefficient)) / (kDerivativeX + std::sin(xPrev));
         ++iterations;
-        if (iterations > kMaxIterations) {
-            return {false};
-        }
     }
 
     return {.x = xCurr, .iterations = iterations};
