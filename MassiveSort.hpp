@@ -4,9 +4,9 @@ enum class MenuOption : int {
     Dynamic,
 };
 
-enum class MethodOption : int {
-    minMax = 1,
-    bubble,
+struct SortData{
+    int replacements = 0;
+    int comparasons = 0;
 };
 
 void TaskChoose();
@@ -15,6 +15,10 @@ void StartCyle();
 void StaticApp();
 void DynamicApp();
 
-void BubbleSort(int* massive);
-void MinMaxSort(int* massive);
+void StaticSortsApp(int* massive, int masLen);
+void DynamicSortsApp(int* massive, int masLen);
+
+[[nodiscard]] SortData BubbleSort(int* massive, char where);
+[[nodiscard]] SortData MinMaxSort(int* massive, char where);
+
 }  // namespace MassiveSort
