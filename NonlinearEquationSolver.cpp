@@ -7,8 +7,8 @@
 namespace {
 const double kXDefine = 0.;
 const int kMaxIterations = 10'000;
+const int kDecimalBase = 10;
 
-int Answer{};
 
 const int kDerivativeX = 1;
 }  // namespace
@@ -28,9 +28,9 @@ namespace {
     return menuOption;
 }
 
-[[nodiscard]] double ReadPrecicion() {
-    std::cout << "Введите погрешность(в формате 1e-k, где k - целое число)\n";
-    double precicion{};
+[[nodiscard]] int ReadPrecicion() {
+    std::cout << "Введите число k, так, чтобы погрешность приняла вид 10^-k \n";
+    int precicion{};
     std::cin >> precicion;
     return precicion;
 }
@@ -47,8 +47,8 @@ namespace {
     return cosineCoefficient * std::cos(xPrev);
 }
 
-void PrintAnswer(double x, int iterations, double precicion) {
-    std::cout << "Ответ: " << std::setw(static_cast<int>(std::log10(1 / precicion))) << x << "\n" << "Количество итераций: " << iterations << "\n";
+void PrintAnswer(double x, int iterations, int precicion) {
+    std::cout << "Ответ: " << std::setprecision(precicion) << x << "\n" << "Количество итераций: " << iterations << "\n";
 }
 
 }  // namespace
@@ -74,14 +74,15 @@ Answer IterationMethodCount(int cosineCoefficient, double eps) {
 
 void IterationMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
-    double precicion = ReadPrecicion();
+    int userPrecicion = ReadPrecicion();
+    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
 
     Answer answer = IterationMethodCount(cosineCoefficient, precicion);
 
     if (!answer.xValid) {
         std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
     } else {
-        PrintAnswer(answer.x, answer.iterations, precicion);
+        PrintAnswer(answer.x, answer.iterations, userPrecicion);
     }
 }
 
@@ -101,7 +102,8 @@ Answer NewthonMethodCount(int cosineCoefficient, double eps) {
 
 void NewthonMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
-    double precicion = ReadPrecicion();
+    int userPrecicion = ReadPrecicion();
+    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
 
     Answer answer = NewthonMethodCount(cosineCoefficient, precicion);
 
@@ -109,7 +111,7 @@ void NewthonMethodApp() {
         std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
 
     } else {
-        PrintAnswer(answer.x, answer.iterations, precicion);
+        PrintAnswer(answer.x, answer.iterations, userPrecicion);
     }
 }
 
@@ -144,7 +146,8 @@ Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, do
 
 void HalfDivisionMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
-    double precicion = ReadPrecicion();
+    int userPrecicion = ReadPrecicion();
+    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
 
     std::cout << "Введите числа a и b (a<b) через пробел\n";
     double lhs{};
@@ -156,7 +159,7 @@ void HalfDivisionMethodApp() {
     }
     Answer answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
     if (answer.xValid) {
-        PrintAnswer(answer.x, answer.iterations, precicion);
+        PrintAnswer(answer.x, answer.iterations, userPrecicion);
     } else {
         std::cout << "Значение функции в точках a и b не противоположно по знаку!\n";
     }
