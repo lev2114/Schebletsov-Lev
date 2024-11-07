@@ -47,8 +47,12 @@ namespace {
     return cosineCoefficient * std::cos(xPrev);
 }
 
-void PrintAnswer(double x, int iterations, int precicion) {
-    std::cout << "Ответ: " << std::setprecision(precicion) << x << "\n" << "Количество итераций: " << iterations << "\n";
+void PrintAnswer(double x, int iterations, int precicion, NonLinearEquationSolver::Answer answer) {
+    if (!answer.xValid) {
+        std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
+    } else {
+        std::cout << "Ответ: " << std::setprecision(precicion) << x << "\n" << "Количество итераций: " << iterations << "\n";
+    }
 }
 
 }  // namespace
@@ -75,15 +79,10 @@ Answer IterationMethodCount(int cosineCoefficient, double eps) {
 void IterationMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     int userPrecicion = ReadPrecicion();
-    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
+    double precicion = std::pow(kDecimalBase,- userPrecicion);
 
     Answer answer = IterationMethodCount(cosineCoefficient, precicion);
-
-    if (!answer.xValid) {
-        std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
-    } else {
-        PrintAnswer(answer.x, answer.iterations, userPrecicion);
-    }
+    PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
 Answer NewthonMethodCount(int cosineCoefficient, double eps) {
@@ -93,7 +92,7 @@ Answer NewthonMethodCount(int cosineCoefficient, double eps) {
 
     while (std::abs(xCurr - xPrev) > eps) {
         xPrev = xCurr;
-        xCurr -= (EquationSolve(xPrev, cosineCoefficient)) / (kDerivativeX + std::sin(xPrev));
+        xCurr -= EquationSolve(xPrev, cosineCoefficient) / (kDerivativeX + std::sin(xPrev));
         ++iterations;
     }
 
@@ -107,12 +106,7 @@ void NewthonMethodApp() {
 
     Answer answer = NewthonMethodCount(cosineCoefficient, precicion);
 
-    if (!answer.xValid) {
-        std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
-
-    } else {
-        PrintAnswer(answer.x, answer.iterations, userPrecicion);
-    }
+    PrintAnswer(answer.x, answer.iterations, userPrecicion, answer );
 }
 
 Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, double rhs) {
@@ -147,7 +141,7 @@ Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, do
 void HalfDivisionMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     int userPrecicion = ReadPrecicion();
-    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
+    double precicion = std::pow(kDecimalBase,(- userPrecicion));
 
     std::cout << "Введите числа a и b (a<b) через пробел\n";
     double lhs{};
@@ -158,11 +152,7 @@ void HalfDivisionMethodApp() {
         return;
     }
     Answer answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
-    if (answer.xValid) {
-        PrintAnswer(answer.x, answer.iterations, userPrecicion);
-    } else {
-        std::cout << "Значение функции в точках a и b не противоположно по знаку!\n";
-    }
+        PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
 void ExecuteMethod() {
