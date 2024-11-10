@@ -50,7 +50,7 @@ void PrintAnswer(double x, int iterations, int precicion, NonLinearEquationSolve
     if (!answer.xValid) {
         std::cerr << "Решение с данными параметрами данным методом не сходится или сходится слишком медленно! Пожалуйста, попробуйте другой метод!\n";
     } else {
-        std::cout << "Ответ: " << std::setprecision(precicion) << x << std::endl << "Количество итераций: " << iterations << std::endl;;
+        std::cout << "Ответ: " << std::setprecision(precicion) << x << std::endl << "Количество итераций: " << iterations << std::endl;
     }
 }
 
