@@ -26,4 +26,4 @@ void IterationMethodApp();
 [[nodiscard]] Answer NewthonMethodCount(int cosineCoefficient, double eps);
 }  // namespace NonLinearEquationSolver
 
-#endif // DEFINE NONLINEAREQATIONSOLVER
+#endif  // DEFINE NONLINEAREQATIONSOLVER

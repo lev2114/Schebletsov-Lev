@@ -9,7 +9,6 @@ const double kXDefine = 0.;
 const int kMaxIterations = 10'000;
 const int kDecimalBase = 10;
 
-
 const int kDerivativeX = 1;
 }  // namespace
 
@@ -79,7 +78,7 @@ Answer IterationMethodCount(int cosineCoefficient, double eps) {
 void IterationMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     int userPrecicion = ReadPrecicion();
-    double precicion = std::pow(kDecimalBase,- userPrecicion);
+    double precicion = std::pow(kDecimalBase, -userPrecicion);
 
     Answer answer = IterationMethodCount(cosineCoefficient, precicion);
     PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
@@ -102,11 +101,11 @@ Answer NewthonMethodCount(int cosineCoefficient, double eps) {
 void NewthonMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     int userPrecicion = ReadPrecicion();
-    double precicion = std::pow(kDecimalBase,(-1*userPrecicion));
+    double precicion = std::pow(kDecimalBase, (-1 * userPrecicion));
 
     Answer answer = NewthonMethodCount(cosineCoefficient, precicion);
 
-    PrintAnswer(answer.x, answer.iterations, userPrecicion, answer );
+    PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
 Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, double rhs) {
@@ -141,7 +140,7 @@ Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, do
 void HalfDivisionMethodApp() {
     int cosineCoefficient = ReadCosineCoefficient();
     int userPrecicion = ReadPrecicion();
-    double precicion = std::pow(kDecimalBase,(- userPrecicion));
+    double precicion = std::pow(kDecimalBase, (-userPrecicion));
 
     std::cout << "Введите числа a и b (a<b) через пробел\n";
     double lhs{};
@@ -152,7 +151,7 @@ void HalfDivisionMethodApp() {
         return;
     }
     Answer answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
-        PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
+    PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
 void ExecuteMethod() {
