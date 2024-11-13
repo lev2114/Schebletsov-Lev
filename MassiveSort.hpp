@@ -7,7 +7,7 @@ enum class MenuOption : int {
     Dynamic,
 };
 
-struct SortData{
+struct SortData {
     int replacements = 0;
     int comparasons = 0;
 };

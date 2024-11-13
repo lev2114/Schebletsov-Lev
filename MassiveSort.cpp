@@ -60,7 +60,7 @@ void printMassive(int* massive, int masLen) {
 
 namespace MassiveSort {
 
-SortData MinMaxSort(int* massive, int masLen, char where){
+SortData MinMaxSort(int* massive, int masLen, char where) {
     if (massive == nullptr) {
         std::cerr << "Массива не существует!";
         return {};
@@ -69,11 +69,11 @@ SortData MinMaxSort(int* massive, int masLen, char where){
     int replacements{};
     int comparasons{};
 
-    if (where == 'u'){
-        for (size_t i = 0; i < masLen-1; ++i){
-            for (size_t j = i+1; j < masLen; j++){
+    if (where == 'u') {
+        for (size_t i = 0; i < masLen - 1; ++i) {
+            for (size_t j = i + 1; j < masLen; j++) {
                 comparasons += 1;
-                if (massive[i] > massive[j]){
+                if (massive[i] > massive[j]) {
                     replacements += 1;
                     Swap(massive + i, massive + j);
                 }
@@ -81,10 +81,10 @@ SortData MinMaxSort(int* massive, int masLen, char where){
         }
         return {.replacements = replacements, .comparasons = comparasons};
     } else {
-        for (size_t i = 0; i < masLen-1; ++i){
-            for (size_t j = i+1; j < masLen; j++){
+        for (size_t i = 0; i < masLen - 1; ++i) {
+            for (size_t j = i + 1; j < masLen; j++) {
                 comparasons += 1;
-                if (massive[i] < massive[j]){
+                if (massive[i] < massive[j]) {
                     replacements += 1;
                     Swap(massive + i, massive + j);
                 }
@@ -123,7 +123,7 @@ SortData BubbleSort(int* massive, int masLen, char where) {
 
     } else {
         for (size_t i = 0; i < masLen - 1; ++i) {
-            for (size_t j = masLen - 1; j > i ; --j) {
+            for (size_t j = masLen - 1; j > i; --j) {
                 comparasons += 1;
                 if (massive[j] > massive[j - 1]) {
                     Swap(massive + j, massive + j - 1);
@@ -182,8 +182,6 @@ void StaticSortsApp(int* massive, int masLen) {
     std::cout << "Отсортированный вниз массив:\n";
     printMassive(massiveCopy, masLen);
     std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-
 
     delete[] massiveCopy;
 }
