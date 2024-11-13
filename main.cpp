@@ -1,7 +1,6 @@
-#include <iostream>
 #include "MassiveSort.hpp"
 
 int main(int, char**) {
-    MassiveSort::StartCyle();
+    MassiveSort::StartCycle();
     return 0;
 }

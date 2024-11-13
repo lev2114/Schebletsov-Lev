@@ -1,3 +1,6 @@
+#ifndef MASSIVESORT
+#define MASSIVESORT
+
 namespace MassiveSort {
 enum class MenuOption : int {
     Static = 1,
@@ -10,7 +13,7 @@ struct SortData{
 };
 
 void TaskChoose();
-void StartCyle();
+void StartCycle();
 
 void StaticApp();
 void DynamicApp();
@@ -18,7 +21,8 @@ void DynamicApp();
 void StaticSortsApp(int* massive, int masLen);
 void DynamicSortsApp(int* massive, int masLen);
 
-[[nodiscard]] SortData BubbleSort(int* massive, char where);
-[[nodiscard]] SortData MinMaxSort(int* massive, char where);
+[[nodiscard]] SortData BubbleSort(int* massive, int masLen, char where);
+[[nodiscard]] SortData MinMaxSort(int* massive, int masLen, char where);
 
 }  // namespace MassiveSort
+#endif
