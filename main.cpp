@@ -1,6 +1,6 @@
 #include "MassiveSort.hpp"
 
 int main(int, char**) {
-    MassiveSort::StartCycle();
+    MassiveSort::MainLoop();
     return 0;
 }
