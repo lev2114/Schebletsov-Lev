@@ -8,21 +8,18 @@ enum class MenuOption : int {
 };
 
 struct SortData {
-    int replacements = 0;
-    int comparasons = 0;
+    int swaps = 0;
+    int comparisons = 0;
 };
 
 void TaskChoose();
-void StartCycle();
+void MainLoop();
 
 void StaticApp();
 void DynamicApp();
 
-void StaticSortsApp(int* massive, int masLen);
-void DynamicSortsApp(int* massive, int masLen);
-
-[[nodiscard]] SortData BubbleSort(int* massive, int masLen, char where);
-[[nodiscard]] SortData MinMaxSort(int* massive, int masLen, char where);
+[[nodiscard]] SortData BubbleSort(int* array, int arrLen, bool ascending);
+[[nodiscard]] SortData SelectionSort(int* array, int arrLen, bool ascending);
 
 }  // namespace MassiveSort
 #endif

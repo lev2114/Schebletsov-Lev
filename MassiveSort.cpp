@@ -2,13 +2,114 @@
 #include <iostream>
 #include <random>
 namespace {
+
 const int kStaticMassiveLength = 7;
+[[nodiscard]] int* ArrayCopy(int* array, int arrLen) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
+        return nullptr;
+    }
+
+    int* arrayCopy = new int[arrLen];
+    for (size_t i = 0; i < arrLen; ++i) {
+        arrayCopy[i] = array[i];
+    }
+    return arrayCopy;
+}
+
+void printArray(int* array, int arrLen) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
+        return;
+    }
+    for (size_t i = 0; i < arrLen; ++i) {
+        std::cout << array[i] << " ";
+    }
+    std::cout << "\n";
+}
+
+
+void StaticSortsApp(int* array, int arrLen) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
+        return;
+    }
+
+    int* arrayCopy = ArrayCopy(array, arrLen);
+    std::cout << "Сортировка пузырьком:\n отсортированный массив:\n";
+    printArray(array, arrLen);
+
+    MassiveSort::SortData sortData = MassiveSort::BubbleSort(array, arrLen, true);
+    std::cout << "Отсортированный по возрастанию массив:\n";
+    printArray(array, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений:  " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::BubbleSort(array, arrLen, true);
+    std::cout << "Отсортированный по возрастанию массив:\n";
+    printArray(array, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::BubbleSort(array, arrLen, false);
+    std::cout << "Отсортированный по убыванию массив:\n";
+    printArray(array, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    std::cout << "Сортировка выбором:\n отсортированный массив:\n";
+    printArray(arrayCopy, arrLen);
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, true);
+    std::cout << "Отсортированный по возрастанию массив:\n\n";
+    printArray(arrayCopy, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, true);
+    std::cout << "Отсортированный по возрастанию массив:\n";
+    printArray(arrayCopy, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, false);
+    std::cout << "Отсортированный по убыванию массив:\n";
+    printArray(arrayCopy, arrLen);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    delete[] arrayCopy;
+}
+
+void DynamicSortsApp(int* array, int arrLen) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
+        return;
+    }
+    int* arrayCopy = ArrayCopy(array, arrLen);
+    std::cout << "Сортировка пузырьком:\n";
+
+    MassiveSort::SortData sortData = MassiveSort::BubbleSort(array, arrLen, true);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::BubbleSort(array, arrLen, true);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::BubbleSort(array, arrLen, false);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    std::cout << "Сортировка выбором:\n";
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, true);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, true);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    sortData = MassiveSort::SelectionSort(arrayCopy, arrLen, false);
+    std::cout << "Перестановок: " << sortData.swaps << "\n" << "Сравнений: " << sortData.comparisons << "\n\n";
+
+    delete[] arrayCopy;
+}
 
 void Swap(int* lhs, int* rhs) {
-    int temporaryStorage{};
-    temporaryStorage = *lhs;
-    *lhs = *rhs;
-    *rhs = temporaryStorage;
+    *lhs = *rhs + *lhs;
+    *rhs = *lhs - *rhs;
+    *lhs -= *rhs;
 }
 
 [[nodiscard]] int AskMenuOption() {
@@ -18,205 +119,75 @@ void Swap(int* lhs, int* rhs) {
     return method;
 }
 
-void FillMassive(int* massive, int lhs, int rhs, int masLen) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
+void FillArray(int* array, int lhs, int rhs, int arrLen) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
         return;
     }
-
+    
     std::random_device r{};
     std::default_random_engine randomEngine(r());
     std::uniform_int_distribution<int> distribution(lhs, rhs);
-    for (size_t i = 0; i < masLen; ++i) {
-        massive[i] = distribution(randomEngine);
+    for (size_t i = 0; i < arrLen; ++i) {
+        array[i] = distribution(randomEngine);
     }
-}
-
-[[nodiscard]] int* MassiveCopy(int* massive, int masLen) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
-        return nullptr;
-    }
-
-    int* massiveCopy = new int[masLen];
-    for (size_t i = 0; i < masLen; ++i) {
-        massiveCopy[i] = massive[i];
-    }
-    return massiveCopy;
-}
-
-void printMassive(int* massive, int masLen) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
-        return;
-    }
-    for (size_t i = 0; i < masLen; ++i) {
-        std::cout << massive[i] << " ";
-    }
-    std::cout << "\n";
 }
 
 }  // namespace
 
 namespace MassiveSort {
 
-SortData MinMaxSort(int* massive, int masLen, char where) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
+SortData SelectionSort(int* array, int arrLen, bool ascending) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
         return {};
     }
 
-    int replacements{};
-    int comparasons{};
+    int swaps{};
+    int comparisons{}; 
 
-    if (where == 'u') {
-        for (size_t i = 0; i < masLen - 1; ++i) {
-            for (size_t j = i + 1; j < masLen; j++) {
-                comparasons += 1;
-                if (massive[i] > massive[j]) {
-                    replacements += 1;
-                    Swap(massive + i, massive + j);
+        for (size_t i = 0; i < arrLen - 1; ++i) {
+            for (size_t j = i + 1; j < arrLen; j++) {
+                if (array[i] > array[j] == ascending && array[i] != array[j]) {
+                    swaps += 1;
+                    comparisons += 1;
+                    Swap(array + i, array + j);
+                } else{
+                    comparisons += 1;
                 }
             }
         }
-        return {.replacements = replacements, .comparasons = comparasons};
-    } else {
-        for (size_t i = 0; i < masLen - 1; ++i) {
-            for (size_t j = i + 1; j < masLen; j++) {
-                comparasons += 1;
-                if (massive[i] < massive[j]) {
-                    replacements += 1;
-                    Swap(massive + i, massive + j);
-                }
-            }
-        }
-        return {.replacements = replacements, .comparasons = comparasons};
-    }
-    return {.replacements = replacements, .comparasons = comparasons};
+        return { .swaps = swaps, .comparisons = comparisons};
+
 }
 
-SortData BubbleSort(int* massive, int masLen, char where) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
+SortData BubbleSort(int* array, int arrLen, bool ascending) {
+    if (array == nullptr) {
+        std::cerr << "Массив пуст!";
         return {};
     }
 
-    int replacements{};
-    int comparasons{};
-    int replacementsPrev{};
+    int swaps{};
+    int comparisons{};
+    int swapsPrev{};
 
-    if (where == 'u') {
-        for (size_t i = masLen; i > 0; --i) {
-            for (size_t j = 0; j < i - 1; ++j) {
-                comparasons += 1;
-                if (massive[j] > massive[j + 1]) {
-                    Swap(massive + j, massive + j + 1);
-                    replacements += 1;
-                }
+    for (size_t i = arrLen; i > 0; --i) {
+        for (size_t j = 0; j < i - 1; ++j) {
+            if (array[j] > array[j + 1] == ascending && array[j] != array[j + 1]) {
+                comparisons +=1;
+                Swap(array + j, array + j + 1);
+                swaps += 1;
+            } else{
+                comparisons += 1;
             }
-            if (replacementsPrev == replacements) {
-                return {.replacements = replacements, .comparasons = comparasons};
-            }
-            replacementsPrev = replacements;
         }
-        return {.replacements = replacements, .comparasons = comparasons};
-
-    } else {
-        for (size_t i = 0; i < masLen - 1; ++i) {
-            for (size_t j = masLen - 1; j > i; --j) {
-                comparasons += 1;
-                if (massive[j] > massive[j - 1]) {
-                    Swap(massive + j, massive + j - 1);
-                    replacements += 1;
-                }
-            }
-            if (replacementsPrev == replacements) {
-                return {.replacements = replacements, .comparasons = comparasons};
-            }
-            replacementsPrev = replacements;
+        if (swapsPrev == swaps) {
+            return {.swaps = swaps, .comparisons = comparisons};
         }
-        return {.replacements = replacements, .comparasons = comparasons};
+        swapsPrev = swaps;
     }
-    return {.replacements = replacements, .comparasons = comparasons};
+    return {.swaps = swaps, .comparisons = comparisons};
 }
-
-void StaticSortsApp(int* massive, int masLen) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
-        return;
-    }
-
-    int* massiveCopy = MassiveCopy(massive, masLen);
-    std::cout << "Сортировка пузырьком:\nНеотсортированный массив:\n";
-    printMassive(massive, masLen);
-
-    SortData sortData = BubbleSort(massive, masLen, 'u');
-    std::cout << "Отсортированный вверх массив:\n";
-    printMassive(massive, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений:  " << sortData.comparasons << "\n";
-
-    sortData = BubbleSort(massive, masLen, 'u');
-    std::cout << "Отсортированный вверх массив:\n";
-    printMassive(massive, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = BubbleSort(massive, masLen, 'd');
-    std::cout << "Отсортированный вниз массив:\n";
-    printMassive(massive, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    std::cout << "Сортировка выбором:\nНеотсортированный массив:\n";
-    printMassive(massiveCopy, masLen);
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'u');
-    std::cout << "Отсортированный вверх массив:\n";
-    printMassive(massiveCopy, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'u');
-    std::cout << "Отсортированный вверх массив:\n";
-    printMassive(massiveCopy, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'd');
-    std::cout << "Отсортированный вниз массив:\n";
-    printMassive(massiveCopy, masLen);
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    delete[] massiveCopy;
-}
-
-void DynamicSortsApp(int* massive, int masLen) {
-    if (massive == nullptr) {
-        std::cerr << "Массива не существует!";
-        return;
-    }
-    int* massiveCopy = MassiveCopy(massive, masLen);
-    std::cout << "Сортировка пузырьком:\n";
-
-    SortData sortData = BubbleSort(massive, masLen, 'u');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = BubbleSort(massive, masLen, 'u');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = BubbleSort(massive, masLen, 'd');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    std::cout << "Сортировка выбором:\n";
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'u');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'u');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    sortData = MinMaxSort(massiveCopy, masLen, 'd');
-    std::cout << "Перестановок: " << sortData.replacements << "\n" << "Сравнений: " << sortData.comparasons << "\n";
-
-    delete[] massiveCopy;
-}
-
 void TaskChoose() {
     MenuOption option = static_cast<MenuOption>(AskMenuOption());
     switch (option) {
@@ -234,7 +205,7 @@ void TaskChoose() {
     }
 }
 
-void StartCycle() {
+void MainLoop() {
     char Continuation = 'y';
     while (Continuation == 'y') {
         TaskChoose();
@@ -244,28 +215,28 @@ void StartCycle() {
 }
 
 void StaticApp() {
-    int massive[kStaticMassiveLength]{};
+    int array[kStaticMassiveLength]{};
     int lhs{};
     int rhs{};
     std::cout << "Введите границы распределения через пробел в порядке возрастания:\n";
 
     std::cin >> lhs >> rhs;
-    FillMassive(massive, lhs, rhs, kStaticMassiveLength);
-    StaticSortsApp(massive, kStaticMassiveLength);
+    FillArray(array, lhs, rhs, kStaticMassiveLength);
+    StaticSortsApp(array, kStaticMassiveLength);
 }
 
 void DynamicApp() {
     std::cout << "Введите длину массива\n";
     int massiveLen{};
     std::cin >> massiveLen;
-    int* massive = new int[massiveLen]{};
+    int* array = new int[massiveLen]{};
     int lhs{};
     int rhs{};
     std::cout << "Введите границы распределения через пробел в порядке возрастания:\n";
     std::cin >> lhs >> rhs;
-    FillMassive(massive, lhs, rhs, massiveLen);
-    DynamicSortsApp(massive, massiveLen);
-    delete[] massive;
+    FillArray(array, lhs, rhs, massiveLen);
+    DynamicSortsApp(array, massiveLen);
+    delete[] array;
 }
 
 }  // namespace MassiveSort
