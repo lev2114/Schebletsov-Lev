@@ -1,6 +1,6 @@
-#include "MassiveSort.hpp"
+#include "Integration.hpp"
 
 int main(int, char**) {
-    MassiveSort::MainLoop();
+    
     return 0;
 }
