@@ -1,0 +1,5 @@
+/home/sans2114/Schebletsov-Lev/build/CMakeFiles/Example.dir
+/home/sans2114/Schebletsov-Lev/build/CMakeFiles/clang-format.dir
+/home/sans2114/Schebletsov-Lev/build/CMakeFiles/clang-tidy.dir
+/home/sans2114/Schebletsov-Lev/build/CMakeFiles/edit_cache.dir
+/home/sans2114/Schebletsov-Lev/build/CMakeFiles/rebuild_cache.dir
