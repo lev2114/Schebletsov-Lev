@@ -1,8 +1,8 @@
 #ifndef CRYPTER
 #define CRYPTER
 
-namespace Crypter{
+namespace Crypter {
 void StartProgram(int argc, char** argv);
 }
 
-#endif //DEFINE CRYPTER
+#endif  // DEFINE CRYPTER
