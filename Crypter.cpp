@@ -63,7 +63,7 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
         if (i == numberOfCodes) {
             i -= numberOfCodes;
         }
-        char encodedSymbol = symbol + static_cast<char>(codes[i]); // NOLINT
+        char encodedSymbol = symbol + static_cast<char>(codes[i]);  // NOLINT
         encoded.put(encodedSymbol);
         ++i;
     }
@@ -82,7 +82,7 @@ void Decode(const char* encodedFile, const char* decodedFile, int* codes, int& n
             i -= numberOfCodes;
         }
 
-        char symbol = encodedSymbol - static_cast<char>(codes[i]); // NOLINT
+        char symbol = encodedSymbol - static_cast<char>(codes[i]);  // NOLINT
         decoded.put(symbol);
         ++i;
     }
@@ -107,7 +107,7 @@ int* GetCodes(const char* codebookFile, int& numberOfCodes) {
         while (word != nullptr) {
             char sum = 0;
             for (int i = 0; word[i] != '\0'; ++i) {
-                sum += word[i]; // NOLINT
+                sum += word[i];  // NOLINT
             }
 
             if (numberOfCodes >= codesLen) {
