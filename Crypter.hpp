@@ -5,6 +5,7 @@ namespace Crypter {
 
 struct SymbolData{
     int usageNumber{};
+    int uniqueCodesUsageNumber{};
     int* differentCrypts = nullptr;
 };
 

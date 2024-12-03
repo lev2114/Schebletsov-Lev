@@ -26,22 +26,20 @@ int* ResizeIntArray(int* array, int& masLen) {
     return newArray;
 }
 
-bool AddIfUnique(int*& array, int& arrayLen, int value) {
-    for (int i = 0; i < arrayLen; ++i) {
+bool AddIfUnique(int*& array, int& uniqueCodesUsageNumber, int value) {
+    if (uniqueCodesUsageNumber == 0) {
+        array[uniqueCodesUsageNumber] = value;
+        ++uniqueCodesUsageNumber;
+        return true;
+    }
+    for (int i = 0; i < uniqueCodesUsageNumber; ++i) {
         if (array[i] == value) {
             return false;
         }
     }
 
-    int* newArray = new int[arrayLen + 1];
-    for (int i = 0; i < arrayLen; ++i) {
-        newArray[i] = array[i];
-    }
-    newArray[arrayLen] = value;
-
-    delete[] array;
-    array = newArray;
-    ++arrayLen;
+    array[uniqueCodesUsageNumber] = value;
+    ++uniqueCodesUsageNumber;
 
     return true;
 }
@@ -55,16 +53,7 @@ bool ContainsChar(char* symbols, int length, char target) {
     return false;
 }
 
-bool ContainsInt(int* array, int length, int target) {
-    for (int i = 0; i < length; ++i) {
-        if (array[i] == target) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CheckFiles(const char* inputFile, const char* codebookFile, const char* encodedFile, const char* decodedFile) {
+bool IsFilesExist(const char* inputFile, const char* codebookFile, const char* encodedFile, const char* decodedFile) {
     std::ifstream input(inputFile);
     if (!input.is_open()) {
         std::cout << "Ошибка: Не удалось открыть файл " << inputFile << std::endl;
@@ -100,20 +89,20 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
     std::ofstream encoded(encodedFile, std::ios::binary | std::ios::out);
     char symbol{};
     int i{};
-    int charCount{};
+    int symbolCount{};
 
     data.symbols = new char[kMaxCharNumber];
     data.symbolData = new Crypter::SymbolData[kMaxCharNumber];
+    data.codes = new int[kStandartCodesLen];
+    for (int i = 0; i < kMaxCharNumber; ++i) {
+        data.symbolData[i].differentCrypts = new int[kMaxCharNumber];
+    }
 
     while (input.get(symbol)) {
-        if (i == numberOfCodes) {
-            i -= numberOfCodes;
-        }
-        if (!ContainsChar(data.symbols, kMaxCharNumber, symbol)){
-            data.symbols[charCount] = symbol;
-            data.codes[charCount] = static_cast<int>(symbol);
-            data.symbolData[charCount].usageNumber = 0;
-            charCount += 1;
+        if (!ContainsChar(data.symbols, kMaxCharNumber, symbol)) {
+            data.symbols[symbolCount] = symbol;
+            data.codes[symbolCount] = static_cast<int>(symbol);
+            symbolCount += 1;
         }
 
         int index = 0;
@@ -121,11 +110,16 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
             ++index;
         }
 
-        char encodedSymbol = symbol + static_cast<char>(codes[i]);  // NOLINT
+        if (i == numberOfCodes) {
+            i -= numberOfCodes;
+        }
+
+        char encodedSymbol = symbol + static_cast<char>(codes[i]);
         encoded.put(encodedSymbol);
 
         data.symbolData[index].usageNumber += 1;
-        AddIfUnique(data.symbolData[index].differentCrypts, data.symbolData[index].usageNumber, encodedSymbol);
+        AddIfUnique(data.symbolData[index].differentCrypts, data.symbolData[index].uniqueCodesUsageNumber, codes[i]);
+        data.textLen += 1;
 
         ++i;
     }
@@ -144,7 +138,7 @@ void Decode(const char* encodedFile, const char* decodedFile, int* codes, int& n
             i -= numberOfCodes;
         }
 
-        char symbol = encodedSymbol - static_cast<char>(codes[i]);  // NOLINT
+        char symbol = encodedSymbol - static_cast<char>(codes[i]);
         decoded.put(symbol);
         ++i;
     }
@@ -169,7 +163,7 @@ int* GetCodes(const char* codebookFile, int& numberOfCodes) {
         while (word != nullptr) {
             char sum = 0;
             for (int i = 0; word[i] != '\0'; ++i) {
-                sum += word[i];  // NOLINT
+                sum += word[i];
             }
 
             if (numberOfCodes >= codesLen) {
@@ -188,6 +182,28 @@ int* GetCodes(const char* codebookFile, int& numberOfCodes) {
 }  // namespace
 
 namespace Crypter {
+void PrintData(Data& data) {
+    std::cout << "Размер блокнота: " << data.wordsCount << " слов." << std::endl;
+    std::cout << "Длина исходного текста: " << data.textLen << " символов." <<std::endl;
+    for (int i = 0; i < kMaxCharNumber; ++i) {
+        for (int j = i; j < i + 5; ++j) {
+            std::cout << "Символ: " << data.symbols[j] << std::endl << "Код: " << data.codes[j] << std::endl;
+            std::cout << "Символ встретился " << data.symbolData[j].usageNumber << " раз." << std::endl;
+            std::cout << "Различных шифрований: " << data.symbolData[j].uniqueCodesUsageNumber << std::endl;
+        }
+        char scroll{};
+        std::cout << "Следующие 5 или предыдущие 5?(n/p). Чтобы выйти введите 'e'";
+        std::cin >> scroll;
+        if (scroll == 'p'){
+            i -= 5;
+        } else if (scroll == 'n'){
+            i += 5;
+        } else{
+            return;
+        }
+    }
+}
+
 void StartProgram(int argc, char** argv) {
     if (argc != kFilesNumber) {
         std::cerr << "Введено недостаточно аргументов командной строки!" << std::endl;
@@ -198,7 +214,7 @@ void StartProgram(int argc, char** argv) {
     const char* encodedFile = argv[3];
     const char* decodedFile = argv[4];
 
-    if (!CheckFiles(inputFile, codebookFile, encodedFile, decodedFile)) {
+    if (!IsFilesExist(inputFile, codebookFile, encodedFile, decodedFile)) {
         return;
     }
 
@@ -214,9 +230,15 @@ void StartProgram(int argc, char** argv) {
 
     Decode(encodedFile, decodedFile, codes, numberOfCodes);
 
+    PrintData(data);
+
+    for (int i = 0; i < kMaxCharNumber; ++i) {
+        delete[] data.symbolData[i].differentCrypts;
+    }
+    delete[] data.symbolData;
     delete[] codes;
     delete[] data.symbols;
-    delete[] data.symbolData;
+    delete[] data.codes;
 }
 
 }  // namespace Crypter
