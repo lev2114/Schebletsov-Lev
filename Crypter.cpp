@@ -114,7 +114,6 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
         if (i == numberOfCodes) {
             i -= numberOfCodes;
         }
-        std::cout << "Шифруем символ " << symbol << '\n';
         char encodedSymbol = symbol + static_cast<char>(codes[i]);  // NOLINT
         encoded.put(encodedSymbol);
 
