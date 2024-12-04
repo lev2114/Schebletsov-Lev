@@ -10,6 +10,7 @@ const int kMaxCharNumber = 256;
 const int kStandartCodesLen = 100;
 const int kStandartBufferLen = 2048;
 const int kFilesNumber = 5;
+const int kNumberOfSymbolsWritten = 5;
 
 int* ResizeIntArray(int* array, int& masLen) {
     int newLen = masLen * kArrayAmplify;
@@ -114,7 +115,7 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
             i -= numberOfCodes;
         }
         std::cout << "Шифруем символ " << symbol << '\n';
-        char encodedSymbol = symbol + static_cast<char>(codes[i]);
+        char encodedSymbol = symbol + static_cast<char>(codes[i]);  // NOLINT
         encoded.put(encodedSymbol);
 
         data.symbolData[index].usageNumber += 1;
@@ -138,7 +139,7 @@ void Decode(const char* encodedFile, const char* decodedFile, int* codes, int& n
             i -= numberOfCodes;
         }
 
-        char symbol = encodedSymbol - static_cast<char>(codes[i]);
+        char symbol = encodedSymbol - static_cast<char>(codes[i]);  // NOLINT
         decoded.put(symbol);
         ++i;
     }
@@ -163,7 +164,7 @@ int* GetCodes(const char* codebookFile, int& numberOfCodes) {
         while (word != nullptr) {
             char sum = 0;
             for (int i = 0; word[i] != '\0'; ++i) {
-                sum += word[i];
+                sum += word[i];  // NOLINT
             }
 
             if (numberOfCodes >= codesLen) {
@@ -184,9 +185,9 @@ int* GetCodes(const char* codebookFile, int& numberOfCodes) {
 namespace Crypter {
 void PrintData(Data& data) {
     std::cout << "Размер блокнота: " << data.wordsCount << " слов." << std::endl;
-    std::cout << "Длина исходного текста: " << data.textLen << " символов." <<std::endl;
+    std::cout << "Длина исходного текста: " << data.textLen << " символов." << std::endl;
     for (int i = 0; i < kMaxCharNumber;) {
-        for (int j = i; j < i + 5; ++j) {
+        for (int j = i; j < i + kNumberOfSymbolsWritten; ++j) {
             std::cout << "Символ: " << data.symbols[j] << std::endl << "Код: " << data.codes[j] << std::endl;
             std::cout << "Символ встретился " << data.symbolData[j].usageNumber << " раз." << std::endl;
             std::cout << "Различных шифрований: " << data.symbolData[j].uniqueCodesUsageNumber << std::endl;
@@ -194,11 +195,11 @@ void PrintData(Data& data) {
         char scroll{};
         std::cout << "Следующие 5 или предыдущие 5?(n/p). Чтобы выйти введите 'e'" << '\n';
         std::cin >> scroll;
-        if (scroll == 'p'){
-            i -= 5;
-        } else if (scroll == 'n'){
-            i += 5;
-        } else{
+        if (scroll == 'p') {
+            i -= kNumberOfSymbolsWritten;
+        } else if (scroll == 'n') {
+            i += kNumberOfSymbolsWritten;
+        } else {
             return;
         }
     }
