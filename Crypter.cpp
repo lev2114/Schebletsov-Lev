@@ -55,28 +55,28 @@ bool ContainsChar(char* symbols, int length, char target) {
 
 bool IsFilesExist(const char* inputFile, const char* codebookFile, const char* encodedFile, const char* decodedFile) {
     std::ifstream input(inputFile);
-    if (!input.is_open()) {
+    if (!input) {
         std::cout << "Ошибка: Не удалось открыть файл " << inputFile << std::endl;
         return false;
     }
     input.close();
 
     std::ifstream codebook(codebookFile);
-    if (!codebook.is_open()) {
+    if (!codebook) {
         std::cout << "Ошибка: Не удалось открыть файл " << codebookFile << std::endl;
         return false;
     }
     codebook.close();
 
     std::ofstream encoded(encodedFile, std::ios::trunc);
-    if (!encoded.is_open()) {
+    if (!encoded) {
         std::cout << "Ошибка: Не удалось создать файл " << encodedFile << std::endl;
         return false;
     }
     encoded.close();
 
     std::ofstream decoded(decodedFile, std::ios::trunc);
-    if (!decoded.is_open()) {
+    if (!decoded) {
         std::cout << "Ошибка: Не удалось создать файл " << decodedFile << std::endl;
         return false;
     }
@@ -113,7 +113,7 @@ void Encode(const char* inputFile, int* codes, const char* encodedFile, int& num
         if (i == numberOfCodes) {
             i -= numberOfCodes;
         }
-
+        std::cout << "Шифруем символ " << symbol << '\n';
         char encodedSymbol = symbol + static_cast<char>(codes[i]);
         encoded.put(encodedSymbol);
 
@@ -185,14 +185,14 @@ namespace Crypter {
 void PrintData(Data& data) {
     std::cout << "Размер блокнота: " << data.wordsCount << " слов." << std::endl;
     std::cout << "Длина исходного текста: " << data.textLen << " символов." <<std::endl;
-    for (int i = 0; i < kMaxCharNumber; ++i) {
+    for (int i = 0; i < kMaxCharNumber;) {
         for (int j = i; j < i + 5; ++j) {
             std::cout << "Символ: " << data.symbols[j] << std::endl << "Код: " << data.codes[j] << std::endl;
             std::cout << "Символ встретился " << data.symbolData[j].usageNumber << " раз." << std::endl;
             std::cout << "Различных шифрований: " << data.symbolData[j].uniqueCodesUsageNumber << std::endl;
         }
         char scroll{};
-        std::cout << "Следующие 5 или предыдущие 5?(n/p). Чтобы выйти введите 'e'";
+        std::cout << "Следующие 5 или предыдущие 5?(n/p). Чтобы выйти введите 'e'" << '\n';
         std::cin >> scroll;
         if (scroll == 'p'){
             i -= 5;
