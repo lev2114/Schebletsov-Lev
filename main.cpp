@@ -1,6 +1,6 @@
-#include "Integration.hpp"
+#include "dz.hpp"
 
-int main(int, char**) {
-    
+int main(int,char**){
+    dz::StartProgram();
     return 0;
 }
