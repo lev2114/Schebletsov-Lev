@@ -1,6 +1,6 @@
-#include "dz.hpp"
+#include "RSA.hpp"
 
 int main(int,char**){
-    dz::StartProgram();
+    RSA::StartProgram();
     return 0;
 }
