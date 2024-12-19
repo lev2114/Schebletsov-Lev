@@ -1,6 +1,6 @@
-#include "Integration.hpp"
+#include "MatrixManip.hpp"
 
-int main(int, char**) {
-    Integration::StartProgram();
+int main(int,char**){
+    MatrixManip::StartProgram();
     return 0;
 }
