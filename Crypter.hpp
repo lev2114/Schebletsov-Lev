@@ -9,6 +9,8 @@ struct SymbolData {
     int* differentCrypts = nullptr;
 };
 
+
+
 struct Data {
     char* symbols = nullptr;
     int* codes = nullptr;
