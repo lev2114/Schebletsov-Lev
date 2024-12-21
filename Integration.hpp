@@ -1,9 +1,9 @@
 #ifndef INTEGRATION
 #define INTEGRATION
 #include <cmath>
-#include <iostream>
 #include <cstring>
 #include <iomanip>
+#include <iostream>
 
 namespace Integration {
 enum class MethodsIntegration {
@@ -24,12 +24,12 @@ void SelectMethod();
 
 void LaunchRectangleMethod();
 
-void IntegrateFunctionRectangleMethod(double (*function)(double), double left, double rigth, double epsilon, IntegrationResult array[4], size_t i);
+void RectangleMethod(double (*Function)(double), double a, double b, double epsilon, IntegrationResult& IntegrationResults);
 
 void LaunchTrapezoidMethod();
 
-void IntegrateFunctionTrapezoidMethod(double (*function)(double), double left, double rigth, double epsilon, IntegrationResult array[4], size_t i);
+void TrapezoidMethod(double (*Function)(double), double a, double b, double epsilon, IntegrationResult& IntegrationResults);
 
-void TableOut(IntegrationResult array[4]);
+void TableOut(IntegrationResult array[4], double epsilon);
 }  // namespace Integration
 #endif

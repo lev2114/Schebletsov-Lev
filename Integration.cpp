@@ -10,13 +10,14 @@ const int kFunctionsAmount = 4;
 const int kXDegree = 4;
 const double kXCoefficient = 22;
 const int kResultsNumber = 4;
-const int kMaxIterations = 1e4;
+const int kHowManyEpsilon = 6;
+const int kMaxIterations = 1e6;
 const int kAproximateXDegree = 5;
 const double kCoefficientAproximateX = 5.;
 }  // namespace
 
 namespace {
-[[nodiscard]] bool IsRigthBiggerLeft(double a, double b) {
+[[nodiscard]] bool IsRightBiggerLeft(double a, double b) {
     return b > a;
 }
 
@@ -52,15 +53,6 @@ namespace {
     std::cin >> b;
 
     return b;
-}
-
-[[nodiscard]] double ReadEpsilonFromStdin() {
-    double epsilon = 0.0;
-
-    std::cout << "Введите погрешность в математическом виде" << std::endl;
-    std::cin >> epsilon;
-
-    return epsilon;
 }
 
 [[nodiscard]] char ReadContinueExecutionFromStdin() {
@@ -115,21 +107,10 @@ void SelectMethod() {
 }
 
 void LaunchRectangleMethod() {
+    double epsilon{0.1};
     double a = ReadAFromStdin();
     double b = ReadBFromStdin();
-    double epsilon = ReadEpsilonFromStdin();
     IntegrationResult IntegrationResults[kResultsNumber];
-    double (*functions[])(double) = {CalculateLinearFunction, CalculateSinusoidalFunction, CalculatePowerFunction,
-                                     CalculateInverseTangencialFunction};
-
-    if (!IsRigthBiggerLeft(a, b)) {
-        PrintError();
-        return;
-    }
-
-    for (size_t i = 0; i < kResultsNumber; ++i) {
-        IntegrateFunctionRectangleMethod(*functions[i], a, b, epsilon, IntegrationResults, i);
-    }
 
     IntegrationResults[0].name = (char*)"y=x ";
     IntegrationResults[1].name = (char*)"y=cos(22x)";
@@ -141,44 +122,62 @@ void LaunchRectangleMethod() {
     IntegrationResults[2].preciseIntegral = (std::pow(b, kAproximateXDegree) - std::pow(a, kAproximateXDegree)) / kCoefficientAproximateX;
     IntegrationResults[3].preciseIntegral = b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / 2.0;
 
-    TableOut(IntegrationResults);
-}
+    if (!IsRightBiggerLeft(a, b)) {
+        PrintError();
+            return;
+        }
 
-void IntegrateFunctionRectangleMethod(double (*Function)(double), double a, double b, double epsilon,
-                                      IntegrationResult IntegrationResults[kResultsNumber], size_t i) {
+    double (*functions[])(double) = {CalculateLinearFunction, CalculateSinusoidalFunction, CalculatePowerFunction,
+                                     CalculateInverseTangencialFunction};
+
+    for (size_t j = 0; j < kHowManyEpsilon; epsilon/=10 , ++j){
+
+        for (size_t i = 0; i < kResultsNumber; ++i) {
+            RectangleMethod(*functions[i], a, b, epsilon, IntegrationResults[i]);
+        }
+
+        TableOut(IntegrationResults, epsilon);
+    }
+}
+    
+
+void RectangleMethod(double (*Function)(double), double a, double b, double epsilon,
+                                      IntegrationResult& IntegrationResults) {
     double dx = b - a;
     double f1 = 0;
-    double f2 = Function(a + dx / 2);
+    double f2 = Function(a + dx / 2) * dx;
     int n = 1;
 
-    while (((std::fabs(f1 - f2 / 2) * dx) / 3 > epsilon) && (n < kMaxIterations)) {
-        n *= 2;
+    while ((std::fabs(f1 - f2) > epsilon) && (n < kMaxIterations)) {
         f1 = f2;
         f2 = 0;
+        n *= 2;
         dx = (b - a) / n;
-        for (int k = 0; k < n * 2; ++k) {
-            f2 += Function(a + k * dx / 2 + dx / 2);
+
+        for (int k = 0; k < n; ++k) {
+            f2 += Function(a + k * dx + dx / 2);
         }
+        f2 *= dx;
+
     }
 
-    IntegrationResults[i].area = f2 * dx / 2.;
-    IntegrationResults[i].partitionsNumber = n;
+    IntegrationResults.area = f2;
+    IntegrationResults.partitionsNumber = n;
 }
 
+
+
 void LaunchTrapezoidMethod() {
+    double epsilon{0.1};
     double a = ReadAFromStdin();
     double b = ReadBFromStdin();
-    double epsilon = ReadEpsilonFromStdin();
     IntegrationResult IntegrationResults[kResultsNumber];
+
     double (*functions[])(double) = {CalculateLinearFunction, CalculateSinusoidalFunction, CalculatePowerFunction,
-                                     CalculateInverseTangencialFunction};
-    if (!IsRigthBiggerLeft(a, b)) {
+                                CalculateInverseTangencialFunction};
+    if (!IsRightBiggerLeft(a, b)) {
         PrintError();
         return;
-    }
-
-    for (size_t i = 0; i < kResultsNumber; ++i) {
-        IntegrateFunctionTrapezoidMethod(*functions[i], a, b, epsilon, IntegrationResults, i);
     }
 
     IntegrationResults[0].name = (char*)"y=x ";
@@ -190,12 +189,18 @@ void LaunchTrapezoidMethod() {
     IntegrationResults[1].preciseIntegral = (std::cos(a * kXCoefficient) - std::cos(b * kXCoefficient)) / kXCoefficient;
     IntegrationResults[2].preciseIntegral = (std::pow(b, kAproximateXDegree) - std::pow(a, kAproximateXDegree)) / kCoefficientAproximateX;
     IntegrationResults[3].preciseIntegral = b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / 2.0;
+    for (size_t j = 0; j < kHowManyEpsilon; epsilon/=10){
 
-    TableOut(IntegrationResults);
+        for (size_t i = 0; i < kResultsNumber; ++i) {
+            TrapezoidMethod(*functions[i], a, b, epsilon, IntegrationResults[i]);
+        }
+
+
+        TableOut(IntegrationResults, epsilon);
+    }
 }
 
-void IntegrateFunctionTrapezoidMethod(double (*Function)(double), double a, double b, double epsilon,
-                                      IntegrationResult IntegrationResults[kResultsNumber], size_t i) {
+void TrapezoidMethod(double (*Function)(double), double a, double b, double epsilon, IntegrationResult& IntegrationResults) {
     double dx = b - a;
     double f1 = (Function(a) + Function(b)) / 2;
     double f2 = ((Function(a) + Function(a + dx / 2)) / 2 + (Function(a + dx / 2) + Function(b)) / 2);
@@ -211,11 +216,13 @@ void IntegrateFunctionTrapezoidMethod(double (*Function)(double), double a, doub
         }
     }
 
-    IntegrationResults[i].area = f2 * dx / 2.;
-    IntegrationResults[i].partitionsNumber = n;
+    IntegrationResults.area = f2 * dx / 2.;
+    IntegrationResults.partitionsNumber = n;
 }
 
-void TableOut(IntegrationResult array[kFunctionsAmount]) {
+void TableOut(IntegrationResult array[kFunctionsAmount], double epsilon) {
+    std::cout << "Точность: " << epsilon << std::endl; 
+
     const char SIDE_SYBMOL = '|';
     const char HORIZONTAL_SYBMOL = '-';
     const char CONNECTOR_SYBMOL = '+';
