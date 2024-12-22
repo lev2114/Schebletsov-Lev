@@ -1,15 +1,19 @@
 #ifndef MATRIXMANIP
 #define MAtRIXMANIP
 namespace MatrixManip {
-struct NAndMValues {
-    int n{};
-    int m{};
-};
 
 enum class MatrixTypes {
-    Dynamic = 1,
-    Static,
+    Static = 1,
+    Dynamic,
+
 };
+
+enum class OutputType {
+    Scientific = 's',
+    Float = 'f',
+};
+
+
 
 void StartProgram();
 
@@ -19,8 +23,9 @@ void FillDynamicMatrixNumeric(double** DynamicMatrix, int n, int m);
 
 void StartStaticMatrix();
 
-void FillStaticMatrixNumeric(double** StaticMatrix);
+void FillStaticMatrixNumeric(double StaticMatrix[10][10]);
 
-void PrintMatrix(double** Matrix, int linesNumber, int columnsNumber, bool printNumbersInMathematical, int precision, MatrixTypes matrixType);
+void PrintMatrix(double StaticMatrix[10][10], double** DynamicMatrix, int linesNumber, int columnsNumber,
+                 OutputType FloatOrScientificChoice, int precision, MatrixTypes matrixType);
 }  // namespace MatrixManip
 #endif
