@@ -10,17 +10,36 @@ const int kFunctionsAmount = 4;
 const int kXDegree = 4;
 const double kXCoefficient = 22;
 const int kResultsNumber = 4;
+
+const double kStartEpsilon = 0.1;
 const int kHowManyEpsilon = 6;
+const int kDecimalBase = 10;
+
+const double kLinearIntegralDenominator = 2.0;
+const double kInverseTangenciallDenominator = 2.0;
+const double kTrapezoidalCoefficient = 2.0;
+
 const int kMaxIterations = 1e6;
+
 const int kAproximateXDegree = 5;
 const double kCoefficientAproximateX = 5.;
+
+const char kSideSymbol = '|';
+const char kHorizontalSymbol = '-';
+const char kConnectorSymbol = '+';
+
+const int kColumnCount = 4;
+const int kColumn0Width = 12;
+const int kColumn1Width = 18;
+const int kColumn2Width = 18;
+const int kColumn3Width = 10;
+
+const int kPrecisionHigh = 10;
+const int kPrecisionLow = 6;
+
 }  // namespace
 
 namespace {
-[[nodiscard]] bool IsRightBiggerLeft(double a, double b) {
-    return b > a;
-}
-
 [[nodiscard]] double CalculateLinearFunction(double x) {
     return x;
 }
@@ -77,6 +96,51 @@ void PrintError() {
     std::cerr << "Введены недопустимые данные" << std::endl;
 }
 
+void TableOut(Integration::IntegrationResult array[kFunctionsAmount], double epsilon) {
+    std::cout << "Точность: " << epsilon << std::endl;
+
+    const int m = kColumnCount;
+    int wn[m] = {kColumn0Width, kColumn1Width, kColumn2Width, kColumn3Width};
+
+    const char* title[m] = {"Function", "Integral", "IntSum", "N "};
+
+    int size[m];
+    for (int i = 0; i < m; i++) {
+        size[i] = (int)std::strlen(title[i]);
+    }
+
+    std::cout << kConnectorSymbol << std::setfill(kHorizontalSymbol);
+    for (int j = 0; j < m - 1; j++) {
+        std::cout << std::setw(wn[j]) << kConnectorSymbol;
+    }
+    std::cout << std::setw(wn[m - 1]) << kConnectorSymbol << std::endl;
+    std::cout << kSideSymbol;
+    for (int j = 0; j < m; j++) {
+        std::cout << std::setw((wn[j] - size[j]) / 2) << std::setfill(' ') << ' ' << title[j] << std::setw((wn[j] - size[j]) / 2) << kSideSymbol;
+    }
+    std::cout << std::endl;
+
+    for (int i = 0; i < 4; i++) {
+        std::cout << kConnectorSymbol << std::fixed;
+        for (int j = 0; j < m - 1; j++) {
+            std::cout << std::setfill(kHorizontalSymbol) << std::setw(wn[j]) << kConnectorSymbol;
+        }
+        std::cout << std::setw(wn[m - 1]) << kConnectorSymbol << std::setfill(' ') << std::endl;
+
+        std::cout << kSideSymbol << std::setw((int)(wn[0] - std::strlen(array[i].name)) / 2) << ' ' << array[i].name
+                  << std::setw((int)(wn[0] - std::strlen(array[i].name)) / 2) << kSideSymbol;
+        std::cout << std::setw(wn[1] - 1) << std::setprecision(kPrecisionHigh) << array[i].preciseIntegral << kSideSymbol << std::setw(wn[2] - 1)
+                  << array[i].area << std::setprecision(kPrecisionLow) << kSideSymbol << std::setw(wn[3] - 1) << array[i].partitionsNumber
+                  << kSideSymbol << std::endl;
+    }
+
+    std::cout << kConnectorSymbol << std::setfill(kHorizontalSymbol);
+    for (int j = 0; j < m - 1; j++) {
+        std::cout << std::setw(wn[j]) << kConnectorSymbol;
+    }
+    std::cout << std::setw(wn[m - 1]) << kConnectorSymbol << std::setfill(' ') << std::endl;
+}
+
 }  // namespace
 
 namespace Integration {
@@ -95,10 +159,10 @@ void SelectMethod() {
 
     switch (static_cast<MethodsIntegration>(method)) {
         case MethodsIntegration::Rectangle:
-            LaunchRectangleMethod();
+            StartRectangleMethod();
             break;
         case MethodsIntegration::Trapezoid:
-            LaunchTrapezoidMethod();
+            StartTrapezoidMethod();
             break;
         default:
             PrintError();
@@ -106,32 +170,32 @@ void SelectMethod() {
     }
 }
 
-void LaunchRectangleMethod() {
-    double epsilon{0.1};
+void StartRectangleMethod() {
+    double epsilon{kStartEpsilon};
     double a = ReadAFromStdin();
     double b = ReadBFromStdin();
     IntegrationResult IntegrationResults[kResultsNumber];
 
-    IntegrationResults[0].name = (char*)"y=x ";
-    IntegrationResults[1].name = (char*)"y=cos(22x)";
-    IntegrationResults[2].name = (char*)"y=x^4 ";
-    IntegrationResults[3].name = (char*)"y=atan(x) ";
+    IntegrationResults[0].name = "y=x ";
+    IntegrationResults[1].name = "y=cos(22x)";
+    IntegrationResults[2].name = "y=x^4 ";
+    IntegrationResults[3].name = "y=atan(x) ";
 
-    IntegrationResults[0].preciseIntegral = (b * b - a * a) / 2.;
+    IntegrationResults[0].preciseIntegral = (b * b - a * a) / kLinearIntegralDenominator;
     IntegrationResults[1].preciseIntegral = (std::cos(a * kXCoefficient) - std::cos(b * kXCoefficient)) / kXCoefficient;
     IntegrationResults[2].preciseIntegral = (std::pow(b, kAproximateXDegree) - std::pow(a, kAproximateXDegree)) / kCoefficientAproximateX;
-    IntegrationResults[3].preciseIntegral = b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / 2.0;
+    IntegrationResults[3].preciseIntegral =
+        b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / kInverseTangenciallDenominator;
 
-    if (!IsRightBiggerLeft(a, b)) {
+    if (a > b) {
         PrintError();
-            return;
-        }
+        return;
+    }
 
     double (*functions[])(double) = {CalculateLinearFunction, CalculateSinusoidalFunction, CalculatePowerFunction,
                                      CalculateInverseTangencialFunction};
 
-    for (size_t j = 0; j < kHowManyEpsilon; epsilon/=10 , ++j){
-
+    for (size_t j = 0; j < kHowManyEpsilon; epsilon /= kDecimalBase, ++j) {
         for (size_t i = 0; i < kResultsNumber; ++i) {
             RectangleMethod(*functions[i], a, b, epsilon, IntegrationResults[i]);
         }
@@ -139,10 +203,8 @@ void LaunchRectangleMethod() {
         TableOut(IntegrationResults, epsilon);
     }
 }
-    
 
-void RectangleMethod(double (*Function)(double), double a, double b, double epsilon,
-                                      IntegrationResult& IntegrationResults) {
+void RectangleMethod(double (*Function)(double), double a, double b, double epsilon, IntegrationResult& IntegrationResults) {
     double dx = b - a;
     double f1 = 0;
     double f2 = Function(a + dx / 2) * dx;
@@ -158,43 +220,40 @@ void RectangleMethod(double (*Function)(double), double a, double b, double epsi
             f2 += Function(a + k * dx + dx / 2);
         }
         f2 *= dx;
-
     }
 
     IntegrationResults.area = f2;
     IntegrationResults.partitionsNumber = n;
 }
 
-
-
-void LaunchTrapezoidMethod() {
-    double epsilon{0.1};
+void StartTrapezoidMethod() {
+    double epsilon{kStartEpsilon};
     double a = ReadAFromStdin();
     double b = ReadBFromStdin();
     IntegrationResult IntegrationResults[kResultsNumber];
 
     double (*functions[])(double) = {CalculateLinearFunction, CalculateSinusoidalFunction, CalculatePowerFunction,
-                                CalculateInverseTangencialFunction};
-    if (!IsRightBiggerLeft(a, b)) {
+                                     CalculateInverseTangencialFunction};
+    if (a > b) {
         PrintError();
         return;
     }
 
-    IntegrationResults[0].name = (char*)"y=x ";
-    IntegrationResults[1].name = (char*)"y=cos(22x)";
-    IntegrationResults[2].name = (char*)"y=x^4 ";
-    IntegrationResults[3].name = (char*)"y=atan(x) ";
+    IntegrationResults[0].name = "y=x ";
+    IntegrationResults[1].name = "y=cos(22x)";
+    IntegrationResults[2].name = "y=x^4 ";
+    IntegrationResults[3].name = "y=atan(x) ";
 
-    IntegrationResults[0].preciseIntegral = (b * b - a * a) / 2.;
+    IntegrationResults[0].preciseIntegral = (b * b - a * a) / kLinearIntegralDenominator;
     IntegrationResults[1].preciseIntegral = (std::cos(a * kXCoefficient) - std::cos(b * kXCoefficient)) / kXCoefficient;
     IntegrationResults[2].preciseIntegral = (std::pow(b, kAproximateXDegree) - std::pow(a, kAproximateXDegree)) / kCoefficientAproximateX;
-    IntegrationResults[3].preciseIntegral = b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / 2.0;
-    for (size_t j = 0; j < kHowManyEpsilon; epsilon/=10){
+    IntegrationResults[3].preciseIntegral =
+        b * std::atan(b) - a * std::atan(a) - (std::log(b * b + 1) - std::log(a * a + 1)) / kInverseTangenciallDenominator;
 
+    for (size_t j = 0; j < kHowManyEpsilon; epsilon /= kDecimalBase, ++j) {
         for (size_t i = 0; i < kResultsNumber; ++i) {
             TrapezoidMethod(*functions[i], a, b, epsilon, IntegrationResults[i]);
         }
-
 
         TableOut(IntegrationResults, epsilon);
     }
@@ -216,53 +275,8 @@ void TrapezoidMethod(double (*Function)(double), double a, double b, double epsi
         }
     }
 
-    IntegrationResults.area = f2 * dx / 2.;
+    IntegrationResults.area = f2 * dx / kTrapezoidalCoefficient;
     IntegrationResults.partitionsNumber = n;
 }
 
-void TableOut(IntegrationResult array[kFunctionsAmount], double epsilon) {
-    std::cout << "Точность: " << epsilon << std::endl; 
-
-    const char SIDE_SYBMOL = '|';
-    const char HORIZONTAL_SYBMOL = '-';
-    const char CONNECTOR_SYBMOL = '+';
-
-    const int m = 4;
-    int wn[m] = {12, 18, 18, 10};
-    char* title[m] = {(char*)"Function", (char*)"Integral", (char*)"IntSum", (char*)"N "};
-    int size[m];
-    for (int i = 0; i < m; i++) {
-        size[i] = (int)std::strlen(title[i]);
-    }
-
-    std::cout << CONNECTOR_SYBMOL << std::setfill(HORIZONTAL_SYBMOL);
-    for (int j = 0; j < m - 1; j++) {
-        std::cout << std::setw(wn[j]) << CONNECTOR_SYBMOL;
-    }
-    std::cout << std::setw(wn[m - 1]) << CONNECTOR_SYBMOL << std::endl;
-    std::cout << SIDE_SYBMOL;
-    for (int j = 0; j < m; j++) {
-        std::cout << std::setw((wn[j] - size[j]) / 2) << std::setfill(' ') << ' ' << title[j] << std::setw((wn[j] - size[j]) / 2) << SIDE_SYBMOL;
-    }
-    std::cout << std::endl;
-
-    for (int i = 0; i < 4; i++) {
-        std::cout << CONNECTOR_SYBMOL << std::fixed;
-        for (int j = 0; j < m - 1; j++) {
-            std::cout << std::setfill(HORIZONTAL_SYBMOL) << std::setw(wn[j]) << CONNECTOR_SYBMOL;
-        }
-        std::cout << std::setw(wn[m - 1]) << CONNECTOR_SYBMOL << std::setfill(' ') << std::endl;
-
-        std::cout << SIDE_SYBMOL << std::setw((int)(wn[0] - std::strlen(array[i].name)) / 2) << ' ' << array[i].name
-                  << std::setw((int)(wn[0] - std::strlen(array[i].name)) / 2) << SIDE_SYBMOL;
-        std::cout << std::setw(wn[1] - 1) << std::setprecision(10) << array[i].preciseIntegral << SIDE_SYBMOL << std::setw(wn[2] - 1) << array[i].area
-                  << std::setprecision(6) << SIDE_SYBMOL << std::setw(wn[3] - 1) << array[i].partitionsNumber << SIDE_SYBMOL << std::endl;
-    }
-
-    std::cout << CONNECTOR_SYBMOL << std::setfill(HORIZONTAL_SYBMOL);
-    for (int j = 0; j < m - 1; j++) {
-        std::cout << std::setw(wn[j]) << CONNECTOR_SYBMOL;
-    }
-    std::cout << std::setw(wn[m - 1]) << CONNECTOR_SYBMOL << std::setfill(' ') << std::endl;
-}
 }  // namespace Integration
