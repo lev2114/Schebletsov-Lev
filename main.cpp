@@ -1,6 +1,6 @@
-#include "MatrixManip.hpp"
+#include "Matrix.hpp"
 
 int main(int,char**){
-    MatrixManip::StartProgram();
+    Matrix::StartProgram();
     return 0;
 }
