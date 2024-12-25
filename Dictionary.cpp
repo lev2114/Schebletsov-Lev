@@ -1,16 +1,16 @@
 #include "Dictionary.hpp"
 
 #include <cstring>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 namespace {
 const int kStartWordsNumber = 10;
 const int kDictionaryAmplifier = 2;
 
-void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionarySize){
-    Dictionary::Dictionary* newDictionary = new Dictionary::Dictionary[currentDictionarySize*kDictionaryAmplifier];
-    for (int i = 0; i < currentDictionarySize; ++i){
+void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionarySize) {
+    Dictionary::Dictionary* newDictionary = new Dictionary::Dictionary[currentDictionarySize * kDictionaryAmplifier];
+    for (int i = 0; i < currentDictionarySize; ++i) {
         newDictionary[i] = dictionary[i];
     }
     delete[] dictionary;
@@ -28,42 +28,151 @@ void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionar
     return option;
 }
 
+void RequestWords(char*& russianWord, char*& englishWord) {
+    std::cout << "Введите русское слово английскими буквами и английское слово через пробел!" << std::endl;
+    std::cin >> russianWord >> englishWord;
+}
+
+void RequestEnglishWord(char*& englishWord) {
+    std::cout << "Введите английское слово!" << std::endl;
+    std::cin >> englishWord;
+}
+
+void RequestRussianWord(char*& russianWord) {
+    std::cout << "Введите русское слово!" << std::endl;
+    std::cin >> russianWord;
+}
+
 }  // namespace
 
 namespace Dictionary {
-void CraftBaseDictionary(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordCount){
+[[nodiscard]] bool CraftBaseDictionary(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNumber) {
+    std::ifstream dictionaryFile("Dictionary.txt", std::ios::binary | std::ios::in);
+    if (!dictionaryFile) {
+        std::cout << "Ошибка: Не удалось открыть файл Dictionary.txt. Возможно он отсутствует в папке" << std::endl;
+        return false;
+    }
 
+    char* englishWord = new char[kStandardEnglishWordLen];
+    char* russianWord = new char[kStandardRussianWordLen];
+
+    while (dictionaryFile >> russianWord >> englishWord) {
+        AddWord(dictionary, currentDictionarySize, currentWordsNumber, russianWord, englishWord);
+    }
+    dictionaryFile.close();
+    delete[] russianWord;
+    delete[] englishWord;
+    return true;
 }
 
+void AddWord(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNumber, char*& russianWord, char*& englishWord) {
+    if (currentWordsNumber == currentDictionarySize) {
+        ResizeDictionary(dictionary, currentDictionarySize);
+    }
 
-void AddWord(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNuber){
+    dictionary[currentWordsNumber].englishWord = new char[kStandardEnglishWordLen];
+    dictionary[currentWordsNumber].russianWord = new char[kStandardRussianWordLen];
 
+    std::strncpy(dictionary[currentWordsNumber].englishWord, englishWord, kStandardEnglishWordLen);
+    std::strncpy(dictionary[currentWordsNumber].russianWord, russianWord, kStandardRussianWordLen);
+    ++currentWordsNumber;
 }
 
+void DeleteWord(Dictionary*& dictionary, int& currentWordsNumber, char*& englishWord) {
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        if (std::strcmp(englishWord, dictionary[i].englishWord) == 0) {
+            delete[] dictionary[i].englishWord;
+            delete[] dictionary[i].russianWord;
+            for (int j = i; j < currentWordsNumber - 1; ++j) {
+                dictionary[j] = dictionary[j + 1];
+            }
+            --currentWordsNumber;
+            return;
+        }
+    }
+    std::cout << "Такого слова нет!" << std::endl;
+}
+
+void TranslateWordToRussian(Dictionary*& dictionary, int& currentWordsNumber, char*& englishWord) {
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        if (std::strcmp(englishWord, dictionary[i].englishWord) == 0) {
+            std::cout << "Перевод: " << dictionary[i].russianWord << std::endl;
+            return;
+        }
+    }
+    std::cout << "Такого слова нет!" << std::endl;
+}
+
+void TranslateWordToEnglish(Dictionary*& dictionary, int& currentWordsNumber, char*& russianWord) {
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        if (std::strcmp(russianWord, dictionary[i].russianWord) == 0) {
+            std::cout << "Перевод: " << dictionary[i].englishWord << std::endl;
+            return;
+        }
+    }
+    std::cout << "Такого слова нет!" << std::endl;
+}
+
+void PrintDictionary(Dictionary*& dictionary, int& currentWordsCount) {
+    for (int i = 0; i < currentWordsCount; ++i) {
+        std::cout << i + 1 << ": " << dictionary[i].russianWord << "  " << dictionary[i].englishWord << std::endl;
+    }
+}
+
+void OutputToFile(Dictionary*& dictionary, int& currentWordsNumber) {
+    std::ofstream dictionaryFile("Dictionary.txt", std::ios::binary | std::ios::out | std::ios::trunc);
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        dictionaryFile << dictionary[i].russianWord << " " << dictionary[i].englishWord << std::endl;
+    }
+    dictionaryFile.close();
+}
 
 void OpenMenu(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNumber, char& continueExecution) {
     int option = ReadOption();
     switch (static_cast<MenuOptions>(option)) {
-        case MenuOptions::addWord:
-            AddWord();
+        case MenuOptions::addWord: {
+            char* russianWord = new char[kStandardRussianWordLen];
+            char* englishWord = new char[kStandardEnglishWordLen];
+            RequestWords(russianWord, englishWord);
+            AddWord(dictionary, currentDictionarySize, currentWordsNumber, russianWord, englishWord);
+            delete[] russianWord;
+            delete[] englishWord;
             break;
-        case MenuOptions::deleteWord:
-            DeleteWord();
+        }
+        case MenuOptions::deleteWord: {
+            if (currentWordsNumber == 0) {
+                std::cout << "В словаре не осталось слов!" << std::endl;
+                break;
+            }
+            char* englishWord = new char[kStandardEnglishWordLen];
+            RequestEnglishWord(englishWord);
+            DeleteWord(dictionary, currentWordsNumber, englishWord);
+            delete[] englishWord;
             break;
-        case MenuOptions::translateToRussian:
-            TranslateWordToRussian();
+        }
+        case MenuOptions::translateToRussian: {
+            char* englishWord = new char[kStandardEnglishWordLen];
+            RequestEnglishWord(englishWord);
+            TranslateWordToRussian(dictionary, currentWordsNumber, englishWord);
+            delete[] englishWord;
             break;
-        case MenuOptions::translateToEnglish:
-            TranslateWordToEnglish();
+        }
+        case MenuOptions::translateToEnglish: {
+            char* russianWord = new char[kStandardRussianWordLen];
+            RequestRussianWord(russianWord);
+            TranslateWordToEnglish(dictionary, currentWordsNumber, russianWord);
+            delete[] russianWord;
             break;
-        case MenuOptions::printDictionary:
-            PrintDictionary();
+        }
+        case MenuOptions::printDictionary: {
+            PrintDictionary(dictionary, currentWordsNumber);
             break;
+        }
         case MenuOptions::outputToFile:
-            OutputToFile();
+            OutputToFile(dictionary, currentWordsNumber);
             break;
         default:
-        continueExecution = 'n';
+            continueExecution = 'n';
             break;
     }
 }
@@ -72,10 +181,17 @@ void StartProgram() {
     char continueExecution = 'y';
     Dictionary* dictionary = new Dictionary[kStartWordsNumber];
     int currentDictionarySize = kStartWordsNumber;
-    int currentWordCount{};
-    CraftBaseDictionary(dictionary, currentDictionarySize, currentWordCount);
-    while(continueExecution == 'y'){
-        OpenMenu(dictionary, currentDictionarySize, currentWordCount, continueExecution);
+    int currentWordsNumber{};
+    bool isDictionaryCrafted = CraftBaseDictionary(dictionary, currentDictionarySize, currentWordsNumber);
+    if (isDictionaryCrafted == false) {
+        return;
+    }
+    while (continueExecution == 'y') {
+        OpenMenu(dictionary, currentDictionarySize, currentWordsNumber, continueExecution);
+    }
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        delete[] dictionary[i].englishWord;
+        delete[] dictionary[i].russianWord;
     }
     delete[] dictionary;
 }
