@@ -1,6 +1,6 @@
-#include "Matrix.hpp"
+#include "Dictionary.hpp"
 
 int main(int,char**){
-    Matrix::StartProgram();
+    Dictionary::StartProgram();
     return 0;
 }
