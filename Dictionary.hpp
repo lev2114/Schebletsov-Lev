@@ -1,7 +1,7 @@
 #ifndef DICTIONARY
 #define DICTIONARY
 namespace {
-const int kStandardRussianWordLen = 36;
+const int kStandardRussianWordLen = 72;
 const int kStandardEnglishWordLen = 46;
 }  // namespace
 namespace Dictionary {

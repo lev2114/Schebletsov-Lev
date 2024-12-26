@@ -47,7 +47,7 @@ void RequestRussianWord(char*& russianWord) {
 
 namespace Dictionary {
 [[nodiscard]] bool CraftBaseDictionary(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNumber) {
-    std::ifstream dictionaryFile("Dictionary.txt", std::ios::binary | std::ios::in);
+    std::ifstream dictionaryFile("Dictionary.txt", std::ios::in);
     if (!dictionaryFile) {
         std::cout << "Ошибка: Не удалось открыть файл Dictionary.txt. Возможно он отсутствует в папке" << std::endl;
         return false;
@@ -87,6 +87,7 @@ void DeleteWord(Dictionary*& dictionary, int& currentWordsNumber, char*& english
                 dictionary[j] = dictionary[j + 1];
             }
             --currentWordsNumber;
+            std::cout << "Слово удалено!" << std::endl;
             return;
         }
     }
@@ -120,7 +121,7 @@ void PrintDictionary(Dictionary*& dictionary, int& currentWordsCount) {
 }
 
 void OutputToFile(Dictionary*& dictionary, int& currentWordsNumber) {
-    std::ofstream dictionaryFile("Dictionary.txt", std::ios::binary | std::ios::out | std::ios::trunc);
+    std::ofstream dictionaryFile("Dictionary.txt", std::ios::out | std::ios::trunc);
     for (int i = 0; i < currentWordsNumber; ++i) {
         dictionaryFile << dictionary[i].russianWord << " " << dictionary[i].englishWord << std::endl;
     }

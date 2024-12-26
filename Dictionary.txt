@@ -1,6 +1,6 @@
-sobaka dog
-kot cat
-krasota beauty
-sila power
-mag mage
-derevo tree
+собака dog
+кот cat
+красота beauty
+сила power
+дерево tree
+временный temporary
