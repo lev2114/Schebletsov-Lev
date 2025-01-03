@@ -21,9 +21,9 @@ void HalfDivisionMethodApp();
 void NewthonMethodApp();
 void IterationMethodApp();
 
-[[nodiscard]] Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double a, double b);
-[[nodiscard]] Answer IterationMethodCount(int cosineCoefficient, double eps);
-[[nodiscard]] Answer NewthonMethodCount(int cosineCoefficient, double eps);
+[[nodiscard]] Answer CalculateHalfDivisionMethod(int cosineCoefficient, double eps, double a, double b);
+[[nodiscard]] Answer CalculateIterationMethod(int cosineCoefficient, double eps);
+[[nodiscard]] Answer CalculateNewthonMethod(int cosineCoefficient, double eps);
 }  // namespace NonLinearEquationSolver
 
 #endif  // DEFINE NONLINEAREQATIONSOLVER

@@ -57,7 +57,7 @@ void PrintAnswer(double x, int iterations, int precicion, NonLinearEquationSolve
 }  // namespace
 
 namespace NonLinearEquationSolver {
-Answer IterationMethodCount(int cosineCoefficient, double eps) {
+Answer CalculateIterationMethod(int cosineCoefficient, double eps) {
     int iterations{};
     double xPrev = kXDefine + 1;
     double xCurr = kXDefine;
@@ -80,11 +80,11 @@ void IterationMethodApp() {
     int userPrecicion = ReadPrecicion();
     double precicion = std::pow(kDecimalBase, -userPrecicion);
 
-    Answer answer = IterationMethodCount(cosineCoefficient, precicion);
+    Answer answer = CalculateIterationMethod(cosineCoefficient, precicion);
     PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
-Answer NewthonMethodCount(int cosineCoefficient, double eps) {
+Answer CalculateNewthonMethod(int cosineCoefficient, double eps) {
     int iterations{};
     double xPrev = kXDefine + 1;
     double xCurr = kXDefine;
@@ -103,12 +103,12 @@ void NewthonMethodApp() {
     int userPrecicion = ReadPrecicion();
     double precicion = std::pow(kDecimalBase, (-1 * userPrecicion));
 
-    Answer answer = NewthonMethodCount(cosineCoefficient, precicion);
+    Answer answer = CalculateNewthonMethod(cosineCoefficient, precicion);
 
     PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
-Answer HalfDivisionMethodCount(int cosineCoefficient, double eps, double lhs, double rhs) {
+Answer CalculateHalfDivisionMethod(int cosineCoefficient, double eps, double lhs, double rhs) {
     int iterations{};
     double x{};
     double fx{};
@@ -150,7 +150,7 @@ void HalfDivisionMethodApp() {
         std::cerr << "a не меньше b!";
         return;
     }
-    Answer answer = HalfDivisionMethodCount(cosineCoefficient, precicion, lhs, rhs);
+    Answer answer = CalculateHalfDivisionMethod(cosineCoefficient, precicion, lhs, rhs);
     PrintAnswer(answer.x, answer.iterations, userPrecicion, answer);
 }
 
