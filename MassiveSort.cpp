@@ -36,7 +36,7 @@ void StaticSortsApp(int* array, int arrLen) {
     }
 
     int* arrayCopy = ArrayCopy(array, arrLen);
-    std::cout << "Сортировка пузырьком:\n отсортированный массив:\n";
+    std::cout << "Сортировка пузырьком:\n Неотсортированный массив:\n";
     printArray(array, arrLen);
 
     MassiveSort::SortData sortData = MassiveSort::BubbleSort(array, arrLen, true);
@@ -124,7 +124,7 @@ void FillArray(int* array, int lhs, int rhs, int arrLen) {
         std::cerr << "Массив пуст!";
         return;
     }
-    
+
     std::random_device r{};
     std::default_random_engine randomEngine(r());
     std::uniform_int_distribution<int> distribution(lhs, rhs);
@@ -144,7 +144,7 @@ SortData SelectionSort(int* array, int arrLen, bool ascending) {
     }
 
     int swaps{};
-    int comparisons{}; 
+    int comparisons{};
 
         for (size_t i = 0; i < arrLen - 1; ++i) {
             for (size_t j = i + 1; j < arrLen; j++) {
@@ -206,11 +206,11 @@ void TaskChoose() {
 }
 
 void MainLoop() {
-    char Continuation = 'y';
-    while (Continuation == 'y') {
+    char continuation = 'y';
+    while (continuation == 'y') {
         TaskChoose();
         std::cout << "Вы хотите продолжить?(y/n)\n";
-        std::cin >> Continuation;
+        std::cin >> continuation;
     }
 }
 

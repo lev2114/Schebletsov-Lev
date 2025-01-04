@@ -22,4 +22,4 @@ void DynamicApp();
 [[nodiscard]] SortData SelectionSort(int* array, int arrLen, bool ascending);
 
 }  // namespace MassiveSort
-#endif
+#endif // DEFINE MASSIVESORT
