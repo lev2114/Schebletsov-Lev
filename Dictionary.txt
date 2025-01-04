@@ -1,6 +1,10 @@
-собака dog
-кот cat
+абоба aboba
 красота beauty
+кот cat
+собака dog
+маг mage
+мощь might
 сила power
+секрет secret
+симфония symphony
 дерево tree
-временный temporary

@@ -7,6 +7,7 @@
 namespace {
 const int kStartWordsNumber = 10;
 const int kDictionaryAmplifier = 2;
+const int kBinarySearchDivider = 2;
 
 void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionarySize) {
     Dictionary::Dictionary* newDictionary = new Dictionary::Dictionary[currentDictionarySize * kDictionaryAmplifier];
@@ -19,6 +20,18 @@ void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionar
     currentDictionarySize *= kDictionaryAmplifier;
 }
 
+void SortDictionary(Dictionary::Dictionary*& dictionary, int& currentWordsNumber) {
+    for (int i = 0; i < currentWordsNumber - 1; ++i) {
+        for (int j = 0; j < currentWordsNumber - i - 1; ++j) {
+            if (std::strcmp(dictionary[j].englishWord, dictionary[j + 1].englishWord) > 0) {
+                Dictionary::Dictionary temp = dictionary[j];
+                dictionary[j] = dictionary[j + 1];
+                dictionary[j + 1] = temp;
+            }
+        }
+    }
+}
+
 [[nodiscard]] int ReadOption() {
     std::cout << "Пожалуйста, скажите, что вы хотите сделать:\n1) Добавить слово в словарь\n2) удалить слово из словаря\n3) Перевести английское "
                  "слово на русский\n4) Перевести русское слово на английский\n5) Просмотр словаря\n6) Вывод словаря в файл\n7) Выход"
@@ -29,7 +42,7 @@ void ResizeDictionary(Dictionary::Dictionary*& dictionary, int& currentDictionar
 }
 
 void RequestWords(char*& russianWord, char*& englishWord) {
-    std::cout << "Введите русское слово английскими буквами и английское слово через пробел!" << std::endl;
+    std::cout << "Введите русское слово и английское слово через пробел!" << std::endl;
     std::cin >> russianWord >> englishWord;
 }
 
@@ -69,6 +82,12 @@ void AddWord(Dictionary*& dictionary, int& currentDictionarySize, int& currentWo
     if (currentWordsNumber == currentDictionarySize) {
         ResizeDictionary(dictionary, currentDictionarySize);
     }
+    for (int i = 0; i < currentWordsNumber; ++i) {
+        if (std::strcmp(englishWord, dictionary[i].englishWord) == 0) {
+            std::cout << "Слово уже есть в словаре!" << std::endl;
+            return;
+        }
+    }
 
     dictionary[currentWordsNumber].englishWord = new char[kStandardEnglishWordLen];
     dictionary[currentWordsNumber].russianWord = new char[kStandardRussianWordLen];
@@ -94,13 +113,24 @@ void DeleteWord(Dictionary*& dictionary, int& currentWordsNumber, char*& english
     std::cout << "Такого слова нет!" << std::endl;
 }
 
-void TranslateWordToRussian(Dictionary*& dictionary, int& currentWordsNumber, char*& englishWord) {
-    for (int i = 0; i < currentWordsNumber; ++i) {
-        if (std::strcmp(englishWord, dictionary[i].englishWord) == 0) {
-            std::cout << "Перевод: " << dictionary[i].russianWord << std::endl;
+void TranslateWordToRussian(Dictionary*& dictionary, int& currentWordsNumber, char*& targetWord) {
+    int left{};
+    int right = currentWordsNumber - 1;
+
+    while (left <= right) {
+        int middle = left + (right - left) / kBinarySearchDivider;
+        int cmp = std::strcmp(dictionary[middle].englishWord, targetWord);
+
+        if (cmp == 0) {
+            std::cout << "Перевод: " << dictionary[middle].russianWord << std::endl;
             return;
+        } else if (cmp < 0) {
+            left = middle + 1;
+        } else {
+            right = middle - 1;
         }
     }
+
     std::cout << "Такого слова нет!" << std::endl;
 }
 
@@ -129,6 +159,7 @@ void OutputToFile(Dictionary*& dictionary, int& currentWordsNumber) {
 }
 
 void OpenMenu(Dictionary*& dictionary, int& currentDictionarySize, int& currentWordsNumber, char& continueExecution) {
+    SortDictionary(dictionary, currentWordsNumber);
     int option = ReadOption();
     switch (static_cast<MenuOptions>(option)) {
         case MenuOptions::addWord: {
@@ -184,8 +215,8 @@ void StartProgram() {
     int currentDictionarySize = kStartWordsNumber;
     int currentWordsNumber{};
     bool isDictionaryCrafted = CraftBaseDictionary(dictionary, currentDictionarySize, currentWordsNumber);
-    if (isDictionaryCrafted == false) {
-        return;
+    if (isDictionaryCrafted == false || currentWordsNumber == 0) {
+        std::cout << "Словарь будет пустым!" << std::endl;
     }
     while (continueExecution == 'y') {
         OpenMenu(dictionary, currentDictionarySize, currentWordsNumber, continueExecution);
